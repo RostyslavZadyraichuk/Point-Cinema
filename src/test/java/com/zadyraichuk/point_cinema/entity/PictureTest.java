@@ -8,11 +8,14 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
+import java.util.Arrays;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 @DisplayName("Picture entity test")
 class PictureTest {
 
+    private static String id;
     private static String format;
     private static Binary image;
 
@@ -20,6 +23,7 @@ class PictureTest {
 
     @BeforeAll
     static void beforeAll() {
+        PictureTest.id = "1";
         PictureTest.format = "jpeg";
         byte[] imageBytes = new byte[]{1, 2, 3, 4, 5};
         PictureTest.image = new Binary(imageBytes);
@@ -27,12 +31,36 @@ class PictureTest {
 
     @BeforeEach
     void setUp() {
-        picture = new Picture(PictureTest.image, PictureTest.format);
+        picture = initPicture();
+        picture.setId(PictureTest.id);
+    }
+
+    @Test
+    void testRequiredArgsConstructor() {
+        String formatLocal = "png";
+        byte[] imageBytesLocal = new byte[10];
+        Arrays.fill(imageBytesLocal, (byte) 15);
+        Binary imageLocal = new Binary(imageBytesLocal);
+
+        picture = new Picture(imageLocal, formatLocal);
+
+        assertNull(picture.getId());
+        assertEquals(formatLocal, picture.getFormat());
+        assertEquals(imageLocal, picture.getImage());
+    }
+
+    @Test
+    void testGetterMethods() {
+        assertEquals(PictureTest.id, picture.getId());
+        assertEquals(PictureTest.format, picture.getFormat());
+        assertEquals(PictureTest.image, picture.getImage());
     }
 
     @Test
     @DisplayName("Check ID is null when a new Picture is created")
-    void getId_whenNewPicture() {
+    void testGetId_whenNewCreated() {
+        picture = initPicture();
+
         String actual = picture.getId();
 
         assertNull(actual);
@@ -40,38 +68,15 @@ class PictureTest {
 
     @ParameterizedTest
     @ValueSource(strings = {"1", "10", "100"})
-    @DisplayName("Check getId() returns correct ID after being set")
-    void getId_whenSetBefore(String id) {
-        picture.setId(id);
-
-        String actual = picture.getId();
-        assertEquals(id, actual);
-    }
-
-    @Test
-    @DisplayName("Check getPicture() returns the correct Binary object")
-    void getPicture_whenSetBefore() {
-        Binary expected = PictureTest.image;
-
-        Binary actual = picture.getPicture();
-        assertEquals(expected, actual);
-    }
-
-    @Test
-    @DisplayName("Check getFormat() returns the correct format")
-    void getFormat_whenSetBefore() {
-        String expected = PictureTest.format;
-
-        String actual = picture.getFormat();
-        assertEquals(expected, actual);
-    }
-
-    @ParameterizedTest
-    @ValueSource(strings = {"1", "10", "100"})
     @DisplayName("Check setId() correctly assigns the ID")
-    void setId_whenValid(String id) {
+    void testSetId(String id) {
         picture.setId(id);
 
         assertEquals(id, picture.getId());
     }
+
+    private Picture initPicture() {
+        return new Picture(PictureTest.image, PictureTest.format);
+    }
+
 }

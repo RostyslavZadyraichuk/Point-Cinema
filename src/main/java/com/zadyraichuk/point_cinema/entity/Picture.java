@@ -25,7 +25,6 @@ import org.springframework.data.mongodb.core.mapping.Document;
  */
 @Document(collection = "pictures")
 @RequiredArgsConstructor
-@AllArgsConstructor
 @Getter
 public class Picture {
 
@@ -50,7 +49,7 @@ public class Picture {
      * This field is final and is required for creating a {@code Picture} object.
      * </p>
      */
-    private final Binary picture;
+    private final Binary image;
 
     /**
      * The format of the picture (e.g., JPEG, PNG).

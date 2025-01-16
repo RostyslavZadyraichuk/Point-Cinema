@@ -52,10 +52,8 @@ class ActorTest {
     @ValueSource(strings = {"1", "10", "100"})
     @DisplayName("Test setId method with multiple values")
     void testSetId(String id) {
-        actor.setId(null);
-        assertNull(actor.getId());
-
         actor.setId(id);
+
         assertEquals(id, actor.getId());
     }
 
