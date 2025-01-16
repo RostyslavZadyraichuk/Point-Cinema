@@ -1,5 +1,6 @@
 package com.zadyraichuk.point_cinema.entity;
 
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -10,24 +11,41 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @DisplayName("Actor entity class test")
 class ActorTest {
-    
+
+    private static String id;
+    private static String firstName;
+    private static String lastName;
+    private static String pictureId;
+
     private Actor actor;
+
+    @BeforeAll
+    static void beforeAll() {
+        ActorTest.id = "1";
+        ActorTest.firstName = "John";
+        ActorTest.lastName = "Doe";
+        ActorTest.pictureId = "1";
+    }
 
     @BeforeEach
     void setUp() {
-        actor = new Actor("John", "Doe", "1");
-        actor.setId("1");
+        actor = initActor();
+        actor.setId(ActorTest.id);
     }
 
     @Test
     @DisplayName("Test required-args constructor initializes fields correctly")
     void testRequiredArgsConstructor() {
-        actor = new Actor("Jane", "Doe", "10");
+        String firstNameLocal = "Jane";
+        String lastNameLocal = "Doe";
+        String pictureIdLocal = "100";
+
+        actor = new Actor(firstNameLocal, lastNameLocal, pictureIdLocal);
 
         assertNull(actor.getId());
-        assertEquals("Jane", actor.getFirstName());
-        assertEquals("Doe", actor.getLastName());
-        assertEquals("10", actor.getPictureId());
+        assertEquals(firstNameLocal, actor.getFirstName());
+        assertEquals(lastNameLocal, actor.getLastName());
+        assertEquals(pictureIdLocal, actor.getPictureId());
     }
 
     @ParameterizedTest
@@ -44,7 +62,7 @@ class ActorTest {
     @Test
     @DisplayName("Test getId returns null for newly created Actor")
     void testGetId_whenNewCreated() {
-        actor = new Actor("John", "Doe", "10");
+        actor = initActor();
 
         assertNull(actor.getId());
     }
@@ -52,10 +70,18 @@ class ActorTest {
     @Test
     @DisplayName("Test getter methods for all fields")
     void testGetterMethods() {
-        assertEquals("1", actor.getId());
-        assertEquals("John", actor.getFirstName());
-        assertEquals("Doe", actor.getLastName());
-        assertEquals("1", actor.getPictureId());
+        assertEquals(ActorTest.id, actor.getId());
+        assertEquals(ActorTest.firstName, actor.getFirstName());
+        assertEquals(ActorTest.lastName, actor.getLastName());
+        assertEquals(ActorTest.pictureId, actor.getPictureId());
+    }
+
+    private Actor initActor() {
+        return new Actor(
+                ActorTest.firstName,
+                ActorTest.lastName,
+                ActorTest.pictureId
+        );
     }
 
 }
