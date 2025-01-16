@@ -16,7 +16,6 @@ import org.springframework.data.mongodb.core.mapping.Document;
  * <li>{@code @Getter} generates getters for all fields.</li>
  * <li>{@code @Setter} generates a setter for the {@code id} field.</li>
  * <li>{@code @RequiredArgsConstructor} generates a constructor for {@code picture} and {@code format}, which are final fields.</li>
- * <li>{@code @AllArgsConstructor} generates a constructor for all fields, including {@code id}.</li>
  * </ul>
  * </p>
  *

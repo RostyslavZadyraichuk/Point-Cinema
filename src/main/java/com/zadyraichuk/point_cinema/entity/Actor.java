@@ -8,6 +8,20 @@ import org.springframework.data.mongodb.core.mapping.Field;
 
 /**
  * Represents an Actor entity stored in the "actor" collection of MongoDB.
+ * This class is mapped to the "actor" collection in MongoDB.
+ *
+ * <p>
+ * This class uses Lombok annotations to reduce boilerplate code:
+ * <ul>
+ * <li>{@code @Getter} generates getters for all fields.</li>
+ * <li>{@code @Setter} generates a setter for the {@code id} field.</li>
+ * <li>{@code @RequiredArgsConstructor} generates a constructor for {@code firstName}, {@code lastName} and
+ * {@code pictureId}, which are final fields.</li>
+ * </ul>
+ * </p>
+ *
+ * @author Rostyslav Zadyraichuk
+ * @version 0.1
  */
 @Document(collection = "actor")
 @RequiredArgsConstructor
