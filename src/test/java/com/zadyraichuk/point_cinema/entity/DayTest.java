@@ -7,11 +7,11 @@ import org.junit.jupiter.params.provider.ValueSource;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-@DisplayName("Day Enum Tests")
+@DisplayName("Day enum tests")
 class DayTest {
 
     @Test
-    @DisplayName("Test Enum Values")
+    @DisplayName("Test enum values array is valid")
     void testValues() {
         Day[] expected = getArrayOfDays();
         Day[] actual = Day.values();
@@ -24,6 +24,7 @@ class DayTest {
     }
 
     @Test
+    @DisplayName("Test valueOf method with null value")
     void testValueOf_whenNull() {
         assertThrows(NullPointerException.class,
                 () -> Day.valueOf(null),
@@ -32,12 +33,14 @@ class DayTest {
 
     @ParameterizedTest
     @ValueSource(strings = {"MONDAY", "FRIDAY", "SUNDAY"})
+    @DisplayName("Test valueOf method with valid values")
     void testValueOf_whenValidValue(String value) {
         assertDoesNotThrow(() -> Day.valueOf(value), "Enum should be returned from valid value");
     }
 
     @ParameterizedTest
     @ValueSource(strings = {"saturday", "", "Wednesday", "123", "Monda"})
+    @DisplayName("Test valueOf method with invalid values")
     void testValueOf_whenInvalidValue(String value) {
         assertThrows(IllegalArgumentException.class,
                 () -> Day.valueOf(value),

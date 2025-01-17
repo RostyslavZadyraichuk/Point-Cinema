@@ -7,11 +7,11 @@ import org.junit.jupiter.params.provider.ValueSource;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-@DisplayName("Country Enum Tests")
+@DisplayName("Country enum tests")
 class CountryTest {
 
     @Test
-    @DisplayName("Test Enum Values")
+    @DisplayName("Test enum values array is valid")
     void testValues() {
         Country[] expected = getArrayOfEnums();
         Country[] actual = Country.values();
@@ -24,6 +24,7 @@ class CountryTest {
     }
 
     @Test
+    @DisplayName("Test valueOf method with null value")
     void testValueOf_whenNull() {
         assertThrows(NullPointerException.class,
                 () -> Country.valueOf(null),
@@ -32,12 +33,14 @@ class CountryTest {
 
     @ParameterizedTest
     @ValueSource(strings = {"UKRAINE", "POLAND"})
+    @DisplayName("Test valueOf method with valid values")
     void testValueOf_whenValidValue(String value) {
         assertDoesNotThrow(() -> Country.valueOf(value), "Enum should be returned from valid value");
     }
 
     @ParameterizedTest
     @ValueSource(strings = {"ukraine", "", "Poland", "123"})
+    @DisplayName("Test valueOf method with invalid values")
     void testValueOf_whenInvalidValue(String value) {
         assertThrows(IllegalArgumentException.class,
                 () -> Country.valueOf(value),

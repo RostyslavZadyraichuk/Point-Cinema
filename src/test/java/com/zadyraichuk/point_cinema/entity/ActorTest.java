@@ -42,10 +42,10 @@ class ActorTest {
 
         actor = new Actor(firstNameLocal, lastNameLocal, pictureIdLocal);
 
-        assertNull(actor.getId());
-        assertEquals(firstNameLocal, actor.getFirstName());
-        assertEquals(lastNameLocal, actor.getLastName());
-        assertEquals(pictureIdLocal, actor.getPictureId());
+        assertNull(actor.getId(), "Id should be null when using the required-args constructor");
+        assertEquals(firstNameLocal, actor.getFirstName(), "First name does not match the expected value");
+        assertEquals(lastNameLocal, actor.getLastName(), "Last name does not match the expected value");
+        assertEquals(pictureIdLocal, actor.getPictureId(), "Picture ID does not match the expected value");
     }
 
     @ParameterizedTest
@@ -54,7 +54,7 @@ class ActorTest {
     void testSetId(String id) {
         actor.setId(id);
 
-        assertEquals(id, actor.getId());
+        assertEquals(id, actor.getId(), "setId method failed to set the expected Id");
     }
 
     @Test
@@ -62,16 +62,16 @@ class ActorTest {
     void testGetId_whenNewCreated() {
         actor = initActor();
 
-        assertNull(actor.getId());
+        assertNull(actor.getId(), "Newly created Actor should have null Id");
     }
 
     @Test
     @DisplayName("Test getter methods for all fields")
     void testGetterMethods() {
-        assertEquals(ActorTest.id, actor.getId());
-        assertEquals(ActorTest.firstName, actor.getFirstName());
-        assertEquals(ActorTest.lastName, actor.getLastName());
-        assertEquals(ActorTest.pictureId, actor.getPictureId());
+        assertEquals(ActorTest.id, actor.getId(), "Getter for id returned an unexpected value");
+        assertEquals(ActorTest.firstName, actor.getFirstName(), "Getter for firstName returned an unexpected value");
+        assertEquals(ActorTest.lastName, actor.getLastName(), "Getter for lastName returned an unexpected value");
+        assertEquals(ActorTest.pictureId, actor.getPictureId(), "Getter for pictureId returned an unexpected value");
     }
 
     private Actor initActor() {

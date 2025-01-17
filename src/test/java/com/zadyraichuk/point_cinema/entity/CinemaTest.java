@@ -2,12 +2,14 @@ package com.zadyraichuk.point_cinema.entity;
 
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+@DisplayName("Cinema entity class test")
 class CinemaTest {
 
     private static String id;
@@ -34,6 +36,7 @@ class CinemaTest {
     }
 
     @Test
+    @DisplayName("Test required-args constructor initializes fields correctly")
     void testRequiredArgsConstructor() {
         String nameLocal = "test1";
         Country countryLocal = Country.UNITED_KINGDOM;
@@ -47,35 +50,38 @@ class CinemaTest {
                 streetLocal
         );
 
-        assertNull(cinema.getId());
-        assertEquals(nameLocal, cinema.getName());
-        assertEquals(countryLocal, cinema.getCountry());
-        assertEquals(cityLocal, cinema.getCity());
-        assertEquals(streetLocal, cinema.getStreet());
+        assertNull(cinema.getId(), "Id should be null when using the required-args constructor");
+        assertEquals(nameLocal, cinema.getName(), "Name does not match the expected value");
+        assertEquals(countryLocal, cinema.getCountry(), "Country does not match the expected value");
+        assertEquals(cityLocal, cinema.getCity(), "City does not match the expected value");
+        assertEquals(streetLocal, cinema.getStreet(), "Street does not match the expected value");
     }
 
     @Test
+    @DisplayName("Test getId returns null for newly created Cinema")
     void testGetId_whenNewCreated() {
         cinema = initCinema();
 
-        assertNull(cinema.getId());
+        assertNull(cinema.getId(), "Id should be null for a newly created Cinema instance");
     }
 
     @Test
+    @DisplayName("Test getter methods for all fields")
     void testGetterMethods() {
-        assertEquals(CinemaTest.id, cinema.getId());
-        assertEquals(CinemaTest.name, cinema.getName());
-        assertEquals(CinemaTest.country, cinema.getCountry());
-        assertEquals(CinemaTest.city, cinema.getCity());
-        assertEquals(CinemaTest.street, cinema.getStreet());
+        assertEquals(CinemaTest.id, cinema.getId(), "Getter for Id returned an unexpected value");
+        assertEquals(CinemaTest.name, cinema.getName(), "Getter for Name returned an unexpected value");
+        assertEquals(CinemaTest.country, cinema.getCountry(), "Getter for Country returned an unexpected value");
+        assertEquals(CinemaTest.city, cinema.getCity(), "Getter for City returned an unexpected value");
+        assertEquals(CinemaTest.street, cinema.getStreet(), "Getter for Street returned an unexpected value");
     }
 
     @ParameterizedTest
     @ValueSource(strings = {"1", "10", "100"})
+    @DisplayName("Test setId method with multiple values")
     void testSetId(String id) {
         cinema.setId(id);
 
-        assertEquals(id, cinema.getId());
+        assertEquals(id, cinema.getId(), "setId method failed to set the expected Id");
     }
 
     private Cinema initCinema() {

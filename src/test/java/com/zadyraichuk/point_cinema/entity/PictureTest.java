@@ -12,7 +12,7 @@ import java.util.Arrays;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-@DisplayName("Picture entity test")
+@DisplayName("Picture entity class tests")
 class PictureTest {
 
     private static String id;
@@ -36,6 +36,7 @@ class PictureTest {
     }
 
     @Test
+    @DisplayName("Test required-args constructor initializes fields correctly")
     void testRequiredArgsConstructor() {
         String formatLocal = "png";
         byte[] imageBytesLocal = new byte[10];
@@ -44,35 +45,36 @@ class PictureTest {
 
         picture = new Picture(imageLocal, formatLocal);
 
-        assertNull(picture.getId());
-        assertEquals(formatLocal, picture.getFormat());
-        assertEquals(imageLocal, picture.getImage());
+        assertNull(picture.getId(), "Id should be null when using the required-args constructor");
+        assertEquals(formatLocal, picture.getFormat(), "Format does not match the expected value");
+        assertEquals(imageLocal, picture.getImage(), "Image does not match the expected value");
     }
 
     @Test
+    @DisplayName("Test getter methods for all fields")
     void testGetterMethods() {
-        assertEquals(PictureTest.id, picture.getId());
-        assertEquals(PictureTest.format, picture.getFormat());
-        assertEquals(PictureTest.image, picture.getImage());
+        assertEquals(PictureTest.id, picture.getId(), "Getter for Id returned an unexpected value");
+        assertEquals(PictureTest.format, picture.getFormat(), "Getter for Format returned an unexpected value");
+        assertEquals(PictureTest.image, picture.getImage(), "Getter for Image returned an unexpected value");
     }
 
     @Test
-    @DisplayName("Check ID is null when a new Picture is created")
+    @DisplayName("Test getId returns null for newly created Picture")
     void testGetId_whenNewCreated() {
         picture = initPicture();
 
         String actual = picture.getId();
 
-        assertNull(actual);
+        assertNull(actual, "Id should be null for a newly created Picture instance");
     }
 
     @ParameterizedTest
     @ValueSource(strings = {"1", "10", "100"})
-    @DisplayName("Check setId() correctly assigns the ID")
+    @DisplayName("Test setId method with multiple values")
     void testSetId(String id) {
         picture.setId(id);
 
-        assertEquals(id, picture.getId());
+        assertEquals(id, picture.getId(), "setId() failed to correctly set the expected Id");
     }
 
     private Picture initPicture() {

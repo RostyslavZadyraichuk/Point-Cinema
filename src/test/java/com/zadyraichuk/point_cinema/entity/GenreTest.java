@@ -7,11 +7,11 @@ import org.junit.jupiter.params.provider.ValueSource;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-@DisplayName("Genre Enum Tests")
+@DisplayName("Genre enum tests")
 class GenreTest {
 
     @Test
-    @DisplayName("Test Enum Values")
+    @DisplayName("Test enum values array is valid")
     void testValues() {
         Genre[] expected = getArrayOfGenres();
         Genre[] actual = Genre.values();
@@ -24,6 +24,7 @@ class GenreTest {
     }
 
     @Test
+    @DisplayName("Test valueOf method with null value")
     void testValueOf_whenNull() {
         assertThrows(NullPointerException.class,
                 () -> Genre.valueOf(null),
@@ -32,12 +33,14 @@ class GenreTest {
 
     @ParameterizedTest
     @ValueSource(strings = {"CARTOON", "HORROR", "THRILLER"})
+    @DisplayName("Test valueOf method with valid values")
     void testValueOf_whenValidValue(String value) {
         assertDoesNotThrow(() -> Genre.valueOf(value), "Enum should be returned from valid value");
     }
 
     @ParameterizedTest
     @ValueSource(strings = {"comedy", "", "Wednesday", "123", "documentar", "action"})
+    @DisplayName("Test valueOf method with invalid values")
     void testValueOf_whenInvalidValue(String value) {
         assertThrows(IllegalArgumentException.class,
                 () -> Genre.valueOf(value),
