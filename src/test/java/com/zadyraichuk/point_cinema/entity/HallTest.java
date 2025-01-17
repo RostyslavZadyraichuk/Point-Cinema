@@ -63,6 +63,7 @@ class HallTest {
         assertEquals(cinemaIdLocal, hall.getCinemaId(), "CinemaId does not match the expected value");
     }
 
+    //todo move nested builder test to @Nested test. see MovieTest class for example
     @Test
     @DisplayName("Test builder initializes fields correctly")
     void testBuilder() {
