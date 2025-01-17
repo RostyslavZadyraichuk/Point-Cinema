@@ -27,6 +27,7 @@ import org.springframework.data.mongodb.core.mapping.Field;
 @AllArgsConstructor
 @Getter
 @Builder
+//todo add @Builder.Defaults if needed (and update tests)
 public class Hall {
 
     /**

@@ -30,6 +30,7 @@ import java.util.*;
 @AllArgsConstructor
 @Getter
 @Builder
+//todo add @Builder.Defaults if needed (and update tests)
 public class Movie {
 
     /**
