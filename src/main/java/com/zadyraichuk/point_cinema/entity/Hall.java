@@ -40,27 +40,27 @@ public class Hall {
     /**
      * The hall number within the cinema.
      */
-    private Integer number;
+    private final Integer number;
 
     /**
      * The number of rows in the hall.
      */
-    private Integer rows;
+    private final Integer rows;
 
     /**
      * The number of columns in the hall (seats per row).
      */
-    private Integer columns;
+    private final Integer columns;
 
     /**
      * The technology available in the hall (e.g., 2D, 3D, 4D).
      */
-    private Technology technology;
+    private final Technology technology;
 
     /**
      * Identifier of the cinema which this hall belongs to.
      */
     @Field(name = "cinema_id")
-    private String cinemaId;
+    private final String cinemaId;
 
 }
