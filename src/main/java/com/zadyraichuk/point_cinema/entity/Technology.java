@@ -22,11 +22,11 @@ import lombok.RequiredArgsConstructor;
 @Getter
 public enum Technology {
 
-    _2D("2D"),
-    _3D("3D"),
-    _4D("4D"),
-    _RM("RM"),
-    _RM_PLUS("RM+");
+    TECHNOLOGY_2D("2D"),
+    TECHNOLOGY_3D("3D"),
+    TECHNOLOGY_4D("4D"),
+    TECHNOLOGY_RM("RM"),
+    TECHNOLOGY_RM_PLUS("RM+");
 
     /**
      * The string representation of the technology type.

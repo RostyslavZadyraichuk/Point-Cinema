@@ -27,7 +27,7 @@ class HallTest {
         HallTest.number = 1;
         HallTest.rows = 1;
         HallTest.columns = 1;
-        HallTest.technology = Technology._3D;
+        HallTest.technology = Technology.TECHNOLOGY_3D;
         HallTest.cinemaId = "1";
     }
 
@@ -43,7 +43,7 @@ class HallTest {
         int numberLocal = 100;
         int rowsLocal = 100;
         int columnsLocal = 100;
-        Technology technologyLocal = Technology._2D;
+        Technology technologyLocal = Technology.TECHNOLOGY_2D;
         String cinemaIdLocal = "100";
 
         hall = new Hall(
@@ -71,7 +71,7 @@ class HallTest {
         int numberLocal = 1000;
         int rowsLocal = 1000;
         int columnsLocal = 1000;
-        Technology technologyLocal = Technology._4D;
+        Technology technologyLocal = Technology.TECHNOLOGY_4D;
         String cinemaIdLocal = "1000";
 
         hall = Hall.builder()

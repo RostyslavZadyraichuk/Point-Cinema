@@ -32,7 +32,7 @@ class TechnologyTest {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {"_2D", "_RM", "_RM_PLUS"})
+    @ValueSource(strings = {"TECHNOLOGY_2D", "TECHNOLOGY_RM", "TECHNOLOGY_RM_PLUS"})
     @DisplayName("Test valueOf method with valid values")
     void testValueOf_whenValidValue(String value) {
         assertDoesNotThrow(() -> Technology.valueOf(value), "Enum should be returned from valid value");
@@ -51,7 +51,7 @@ class TechnologyTest {
     @ValueSource(strings = {"2D", "4D", "RM"})
     @DisplayName("Test type field getter returns proper values")
     void testGetType(String type) {
-        String enumValue = '_' + type;
+        String enumValue = "TECHNOLOGY_" + type;
         Technology technology = Technology.valueOf(enumValue);
         String actual = technology.getType();
 
@@ -60,11 +60,11 @@ class TechnologyTest {
 
     private Technology[] getArrayOfTechnologies() {
         return new Technology[]{
-                Technology._2D,
-                Technology._3D,
-                Technology._4D,
-                Technology._RM,
-                Technology._RM_PLUS
+                Technology.TECHNOLOGY_2D,
+                Technology.TECHNOLOGY_3D,
+                Technology.TECHNOLOGY_4D,
+                Technology.TECHNOLOGY_RM,
+                Technology.TECHNOLOGY_RM_PLUS
         };
     }
 }
