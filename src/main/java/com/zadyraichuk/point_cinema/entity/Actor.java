@@ -19,16 +19,17 @@ import org.springframework.data.mongodb.core.mapping.Field;
  * {@code pictureId}, which are final fields.</li>
  * <li>{@code @Indexed} and {@code @CompoundIndex} define fields are indexed in database for quicker search.
  * Key {@code unique = true} means database supports uniqueness of marked fields additionally.</li>
+ * <li>{@code @EqualsAndHashCode} overrides equals and hashCode methods.</li>
  * </ul>
  * </p>
  *
  * @author Rostyslav Zadyraichuk
- * @version 0.2
  */
 @Document(collection = "actor")
 @RequiredArgsConstructor
 @Getter
 @CompoundIndex(def = "{'first_name': 1, 'last_name': 1}", unique = true)
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class Actor {
 
     /**
@@ -37,6 +38,7 @@ public class Actor {
      */
     @Id
     @Setter
+    @EqualsAndHashCode.Include
     private String id;
 
     /**
