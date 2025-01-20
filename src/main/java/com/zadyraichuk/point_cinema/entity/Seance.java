@@ -7,7 +7,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.List;
 
 /**
@@ -21,24 +21,24 @@ import java.util.List;
  * <li>{@code @Setter} generates a setter for the {@code id} field.</li>
  * <li>{@code @AllArgsConstructor} generates a constructor for all fields.</li>
  * <li>{@code @Builder} implements builder pattern.</li>
+ * <li>{@code @Indexed} and {@code @CompoundIndex} define fields are indexed in database for quicker search.
+ * Key {@code unique = true} means database supports uniqueness of marked fields additionally.</li>
  * </ul>
  * </p>
  *
  * @author Rostyslav Zadyraichuk
- * @version 0.1
+ * @version 0.2
  */
 @Document(collection = "seance")
 @AllArgsConstructor
 @Getter
 @Builder
-//todo add @Builder.Defaults if needed (and update tests)
 public class Seance {
 
     /**
      * Unique identifier for the seance.
      */
     @Id
-    @Indexed(unique = true)
     @Setter
     private String id;
 
@@ -46,18 +46,19 @@ public class Seance {
      * The starting time of the seance.
      */
     @Field(name = "start_seance")
-    private final LocalDateTime startSeance;
+    private final LocalTime startSeance;
 
     /**
      * The ending time of the seance.
      */
     @Field(name = "end_seance")
-    private final LocalDateTime endSeance;
+    private final LocalTime endSeance;
 
     /**
      * The starting date range from which the seance is available.
      */
     @Field(name = "date_from")
+    @Indexed
     private final LocalDate dateFrom;
 
     /**
@@ -82,13 +83,16 @@ public class Seance {
      * The identifier of the movie being screened in the seance.
      */
     @Field(name = "movie_id")
+    @Indexed
     private final String movieId;
 
     /**
      * The language of the seance.
+     * Default seance language is set as Ukrainian.
      */
     @Field(name = "seance_language")
-    private final Lang seanceLang;
+    @Builder.Default
+    private final Language seanceLanguage = Language.UA;
 
     /**
      * The list of days on which the seance is scheduled.

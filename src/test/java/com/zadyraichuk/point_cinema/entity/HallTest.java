@@ -1,11 +1,11 @@
 package com.zadyraichuk.point_cinema.entity;
 
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
+
+import java.util.Collections;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -63,34 +63,6 @@ class HallTest {
         assertEquals(cinemaIdLocal, hall.getCinemaId(), "CinemaId does not match the expected value");
     }
 
-    //todo move nested builder test to @Nested test. see MovieTest class for example
-    @Test
-    @DisplayName("Test builder initializes fields correctly")
-    void testBuilder() {
-        String idLocal = "1000";
-        int numberLocal = 1000;
-        int rowsLocal = 1000;
-        int columnsLocal = 1000;
-        Technology technologyLocal = Technology.TECHNOLOGY_4D;
-        String cinemaIdLocal = "1000";
-
-        hall = Hall.builder()
-                .id(idLocal)
-                .number(numberLocal)
-                .rows(rowsLocal)
-                .columns(columnsLocal)
-                .technology(technologyLocal)
-                .cinemaId(cinemaIdLocal)
-                .build();
-
-        assertEquals(idLocal, hall.getId(), "Id does not match the expected value");
-        assertEquals(numberLocal, hall.getNumber(), "Number does not match the expected value");
-        assertEquals(rowsLocal, hall.getRows(), "Rows do not match the expected value");
-        assertEquals(columnsLocal, hall.getColumns(), "Columns do not match the expected value");
-        assertEquals(technologyLocal, hall.getTechnology(), "Technology does not match the expected value");
-        assertEquals(cinemaIdLocal, hall.getCinemaId(), "CinemaId does not match the expected value");
-    }
-
     @ParameterizedTest
     @ValueSource(strings = {"1", "10", "100"})
     @DisplayName("Test setId method with multiple values")
@@ -120,6 +92,39 @@ class HallTest {
                 .technology(HallTest.technology)
                 .cinemaId(HallTest.cinemaId)
                 .build();
+    }
+
+    @Nested
+    @DisplayName("HallBuilder nested class tests")
+    class HallBuilderTest {
+
+        @Test
+        @DisplayName("Test builder initializes fields correctly")
+        void testBuilderInitialization() {
+            String idLocal = "1000";
+            int numberLocal = 1000;
+            int rowsLocal = 1000;
+            int columnsLocal = 1000;
+            Technology technologyLocal = Technology.TECHNOLOGY_4D;
+            String cinemaIdLocal = "1000";
+
+            hall = Hall.builder()
+                    .id(idLocal)
+                    .number(numberLocal)
+                    .rows(rowsLocal)
+                    .columns(columnsLocal)
+                    .technology(technologyLocal)
+                    .cinemaId(cinemaIdLocal)
+                    .build();
+
+            assertEquals(idLocal, hall.getId(), "Id does not match the expected value");
+            assertEquals(numberLocal, hall.getNumber(), "Number does not match the expected value");
+            assertEquals(rowsLocal, hall.getRows(), "Rows do not match the expected value");
+            assertEquals(columnsLocal, hall.getColumns(), "Columns do not match the expected value");
+            assertEquals(technologyLocal, hall.getTechnology(), "Technology does not match the expected value");
+            assertEquals(cinemaIdLocal, hall.getCinemaId(), "CinemaId does not match the expected value");
+        }
+
     }
 
 }

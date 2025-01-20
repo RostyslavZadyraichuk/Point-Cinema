@@ -20,24 +20,24 @@ import java.util.*;
  * <li>{@code @Setter} generates a setter for the {@code id} field.</li>
  * <li>{@code @AllArgsConstructor} generates a constructor for all fields.</li>
  * <li>{@code @Builder} implements builder pattern.</li>
+ * <li>{@code @Indexed} and {@code @CompoundIndex} define fields are indexed in database for quicker search.
+ * Key {@code unique = true} means database supports uniqueness of marked fields additionally.</li>
  * </ul>
  * </p>
  *
  * @author Rostyslav Zadyraichuk
- * @version 0.1
+ * @version 0.2
  */
 @Document(collection = "movie")
 @AllArgsConstructor
 @Getter
 @Builder
-//todo add @Builder.Defaults if needed (and update tests)
 public class Movie {
 
     /**
      * Unique identifier for the movie.
      */
     @Id
-    @Indexed(unique = true)
     @Setter
     private String id;
 
@@ -45,6 +45,7 @@ public class Movie {
      * The full name of the movie.
      */
     @Field(name = "full_name")
+    @Indexed(unique = true)
     private final String fullName;
 
     /**
@@ -77,13 +78,15 @@ public class Movie {
      * The release date of the movie.
      */
     @Field(name = "release_date")
+    @Indexed
     private final LocalDate releaseDate;
 
     /**
      * The user rating for the movie (default is 0).
      */
     @Field(name = "users_rating")
-    private final Double usersRating;
+    @Builder.Default
+    private final Double usersRating = 0.0;
 
     /**
      * The MPAA rating of the movie (e.g., G, PG, R).
@@ -95,7 +98,8 @@ public class Movie {
      * The IMDb rating of the movie (default is 0).
      */
     @Field(name = "imdb_rating")
-    private final Double imdbRating;
+    @Builder.Default
+    private final Double imdbRating = 0.0;
 
     /**
      * The country where the movie was produced.
@@ -127,12 +131,14 @@ public class Movie {
      */
     @Field(name = "actor_ids")
     @Singular("actorId")
+    @Indexed
     private final List<String> actorIds;
 
     /**
      * A list of genres associated with the movie.
      */
     @Singular("genre")
+    @Indexed
     private final List<Genre> genres;
 
 }

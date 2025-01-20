@@ -274,6 +274,15 @@ class MovieTest {
             assertEquals(genresExpected, actual.getGenres(), "Genres do not match the expected values");
         }
 
+        @Test
+        @DisplayName("Test builder defaults to fields if no values are added")
+        void testBuilderDefaultFields() {
+            movie = Movie.builder().build();
+
+            assertEquals(0, movie.getUsersRating(), "Users rating does not match the expected value");
+            assertEquals(0, movie.getImdbRating(), "IMDB rating does not match the expected value");
+        }
+
     }
 
 }

@@ -5,7 +5,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.Collections;
 import java.util.List;
 
@@ -15,14 +15,14 @@ import static org.junit.jupiter.api.Assertions.*;
 class SeanceTest {
 
     private static String id;
-    private static LocalDateTime startSeance;
-    private static LocalDateTime endSeance;
+    private static LocalTime startSeance;
+    private static LocalTime endSeance;
     private static LocalDate dateFrom;
     private static LocalDate dateTo;
     private static Double ticketPrice;
     private static String hallId;
     private static String movieId;
-    private static Lang seanceLang;
+    private static Language seanceLang;
     private static List<Day> days;
 
     private Seance seance;
@@ -30,14 +30,14 @@ class SeanceTest {
     @BeforeAll
     static void beforeAll() {
         SeanceTest.id = "1";
-        SeanceTest.startSeance = LocalDateTime.of(1, 1, 1, 1, 1);
-        SeanceTest.endSeance = LocalDateTime.of(1, 1, 1, 1, 1);
+        SeanceTest.startSeance = LocalTime.of(1, 1, 1);
+        SeanceTest.endSeance = LocalTime.of(1, 1, 1);
         SeanceTest.dateFrom = LocalDate.of(1, 1, 1);
         SeanceTest.dateTo = LocalDate.of(1, 1, 1);
         SeanceTest.ticketPrice = 1.0;
         SeanceTest.hallId = "1";
         SeanceTest.movieId = "1";
-        SeanceTest.seanceLang = Lang.UKR;
+        SeanceTest.seanceLang = Language.UA;
         SeanceTest.days = Collections.emptyList();
     }
 
@@ -50,14 +50,14 @@ class SeanceTest {
     @DisplayName("Test all-args constructor initializes fields correctly")
     void testAllArgsConstructor() {
         String idLocal = "100";
-        LocalDateTime startSeanceLocal = LocalDateTime.of(100, 1, 1, 1, 1);
-        LocalDateTime endSeanceLocal = LocalDateTime.of(100, 1, 1, 1, 1);
+        LocalTime startSeanceLocal = LocalTime.of(2, 1, 1);
+        LocalTime endSeanceLocal = LocalTime.of(2, 1, 1);
         LocalDate dateFromLocal = LocalDate.of(100, 1, 1);
         LocalDate dateToLocal = LocalDate.of(100, 1, 1);
         Double ticketPriceLocal = 100.0;
         String hallIdLocal = "100";
         String movieIdLocal = "100";
-        Lang seanceLangLocal = Lang.POL;
+        Language seanceLangLocal = Language.PL;
         List<Day> daysLocal = Collections.emptyList();
 
         seance = new Seance(
@@ -81,7 +81,7 @@ class SeanceTest {
         assertEquals(ticketPriceLocal, seance.getTicketPrice(), "Ticket price does not match the expected value");
         assertEquals(hallIdLocal, seance.getHallId(), "Hall id does not match the expected value");
         assertEquals(movieIdLocal, seance.getMovieId(), "MovieId does not match the expected value");
-        assertEquals(seanceLangLocal, seance.getSeanceLang(), "Seance lang does not match the expected value");
+        assertEquals(seanceLangLocal, seance.getSeanceLanguage(), "Seance lang does not match the expected value");
         assertEquals(daysLocal, seance.getDays(), "Days does not match the expected value");
     }
 
@@ -105,7 +105,7 @@ class SeanceTest {
         assertEquals(SeanceTest.ticketPrice, seance.getTicketPrice(), "Getter for ticketPrice returned an unexpected value");
         assertEquals(SeanceTest.hallId, seance.getHallId(), "Getter for hallId returned an unexpected value");
         assertEquals(SeanceTest.movieId, seance.getMovieId(), "Getter for movieId returned an unexpected value");
-        assertEquals(SeanceTest.seanceLang, seance.getSeanceLang(), "Getter for seanceLang returned an unexpected value");
+        assertEquals(SeanceTest.seanceLang, seance.getSeanceLanguage(), "Getter for seanceLang returned an unexpected value");
         assertEquals(SeanceTest.days, seance.getDays(), "Getter for days returned an unexpected value");
     }
 
@@ -119,7 +119,7 @@ class SeanceTest {
                 .ticketPrice(SeanceTest.ticketPrice)
                 .hallId(SeanceTest.hallId)
                 .movieId(SeanceTest.movieId)
-                .seanceLang(SeanceTest.seanceLang)
+                .seanceLanguage(SeanceTest.seanceLang)
                 .days(SeanceTest.days)
                 .build();
     }
@@ -132,14 +132,14 @@ class SeanceTest {
         @DisplayName("Test builder initializes fields correctly")
         void testBuilderInitialization() {
             String idLocal = "1000";
-            LocalDateTime startSeanceLocal = LocalDateTime.of(1000, 1, 1, 1, 1);
-            LocalDateTime endSeanceLocal = LocalDateTime.of(1000, 1, 1, 1, 1);
+            LocalTime startSeanceLocal = LocalTime.of(3, 1, 1);
+            LocalTime endSeanceLocal = LocalTime.of(3, 1, 1);
             LocalDate dateFromLocal = LocalDate.of(1000, 1, 1);
             LocalDate dateToLocal = LocalDate.of(1000, 1, 1);
             Double ticketPriceLocal = 1000.0;
             String hallIdLocal = "1000";
             String movieIdLocal = "1000";
-            Lang seanceLangLocal = Lang.ENG;
+            Language seanceLangLocal = Language.EN;
             List<Day> daysLocal = Collections.emptyList();
 
             seance = Seance.builder()
@@ -151,7 +151,7 @@ class SeanceTest {
                     .ticketPrice(ticketPriceLocal)
                     .hallId(hallIdLocal)
                     .movieId(movieIdLocal)
-                    .seanceLang(seanceLangLocal)
+                    .seanceLanguage(seanceLangLocal)
                     .days(daysLocal)
                     .build();
 
@@ -163,7 +163,7 @@ class SeanceTest {
             assertEquals(ticketPriceLocal, seance.getTicketPrice(), "Ticket price does not match the expected value");
             assertEquals(hallIdLocal, seance.getHallId(), "Hall id does not match the expected value");
             assertEquals(movieIdLocal, seance.getMovieId(), "MovieId does not match the expected value");
-            assertEquals(seanceLangLocal, seance.getSeanceLang(), "Seance lang does not match the expected value");
+            assertEquals(seanceLangLocal, seance.getSeanceLanguage(), "Seance lang does not match the expected value");
             assertEquals(daysLocal, seance.getDays(), "Days does not match the expected value");
         }
 
@@ -189,6 +189,15 @@ class SeanceTest {
                     .build();
 
             assertEquals(daysExpected, actual.getDays(), "Days do not match the expected values");
+        }
+
+        @Test
+        @DisplayName("Test builder defaults to fields if no values are added")
+        void testBuilderDefaultFields() {
+            seance = Seance.builder().build();
+            Language languageExpected = Language.UA;
+
+            assertEquals(languageExpected, seance.getSeanceLanguage(), "Seance language does not match the expected value");
         }
 
     }

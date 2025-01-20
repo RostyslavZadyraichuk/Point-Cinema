@@ -131,6 +131,8 @@ class CommentTest {
             comment = Comment.builder().build();
             LocalDateTime dateTimeExpected = LocalDateTime.now().truncatedTo(ChronoUnit.MINUTES);
 
+            assertEquals(0, comment.getDateTime().getSecond(), "DateTime must be truncated to minutes");
+            assertEquals(0, comment.getDateTime().getNano(), "DateTime must be truncated to minutes");
             assertEquals(dateTimeExpected, comment.getDateTime(), "DateTime does not match the expected value");
         }
 
