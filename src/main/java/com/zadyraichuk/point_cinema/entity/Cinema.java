@@ -2,7 +2,6 @@ package com.zadyraichuk.point_cinema.entity;
 
 import lombok.*;
 import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 /**
@@ -20,7 +19,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
  * </p>
  *
  * @author Rostyslav Zadyraichuk
- * @version 0.1
+ * @version 0.2
  */
 @Document(collection = "cinema")
 @RequiredArgsConstructor
@@ -32,7 +31,6 @@ public class Cinema {
      * Indexed to ensure uniqueness in the database.
      */
     @Id
-    @Indexed(unique = true)
     @Setter
     private String id;
 

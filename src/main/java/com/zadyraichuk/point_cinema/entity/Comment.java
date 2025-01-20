@@ -20,11 +20,13 @@ import java.time.temporal.ChronoUnit;
  * <li>{@code @Setter} generates a setter for the {@code id} field.</li>
  * <li>{@code @AllArgsConstructor} generates a constructor for all fields.</li>
  * <li>{@code @Builder} implements builder pattern.</li>
+ * <li>{@code @Indexed} and {@code @CompoundIndex} define fields are indexed in database for quicker search.
+ * Key {@code unique = true} means database supports uniqueness of marked fields additionally.</li>
  * </ul>
  * </p>
  *
  * @author Rostyslav Zadyraichuk
- * @version 0.1
+ * @version 0.2
  */
 @Document(collection = "comment")
 @AllArgsConstructor
@@ -37,7 +39,6 @@ public class Comment {
      * This field is indexed and must be unique.
      */
     @Id
-    @Indexed(unique = true)
     @Setter
     private String id;
 
@@ -65,6 +66,7 @@ public class Comment {
      * Stored in the database with the field name "movie_id".
      */
     @Field(name = "movie_id")
+    @Indexed
     private String movieId;
 
     /**

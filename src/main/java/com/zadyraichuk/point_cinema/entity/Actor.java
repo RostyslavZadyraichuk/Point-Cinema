@@ -2,7 +2,7 @@ package com.zadyraichuk.point_cinema.entity;
 
 import lombok.*;
 import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.index.Indexed;
+import org.springframework.data.mongodb.core.index.CompoundIndex;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
 
@@ -17,15 +17,18 @@ import org.springframework.data.mongodb.core.mapping.Field;
  * <li>{@code @Setter} generates a setter for the {@code id} field.</li>
  * <li>{@code @RequiredArgsConstructor} generates a constructor for {@code firstName}, {@code lastName} and
  * {@code pictureId}, which are final fields.</li>
+ * <li>{@code @Indexed} and {@code @CompoundIndex} define fields are indexed in database for quicker search.
+ * Key {@code unique = true} means database supports uniqueness of marked fields additionally.</li>
  * </ul>
  * </p>
  *
  * @author Rostyslav Zadyraichuk
- * @version 0.1
+ * @version 0.2
  */
 @Document(collection = "actor")
 @RequiredArgsConstructor
 @Getter
+@CompoundIndex(def = "{'first_name': 1, 'last_name': 1}", unique = true)
 public class Actor {
 
     /**
@@ -33,13 +36,13 @@ public class Actor {
      * It is automatically indexed and must be unique.
      */
     @Id
-    @Indexed(unique = true)
     @Setter
     private String id;
 
     /**
      * First name of the actor.
      * This field is mapped to the "first_name" key in the MongoDB collection.
+     * This field is used in {@code @CompoundIndex} that ensure uniqueness of actor.
      */
     @Field(name = "first_name")
     private final String firstName;
@@ -47,6 +50,7 @@ public class Actor {
     /**
      * Last name of the actor.
      * This field is mapped to the "last_name" key in the MongoDB collection.
+     * This field is used in {@code @CompoundIndex} that ensure uniqueness of actor.
      */
     @Field(name = "last_name")
     private final String lastName;

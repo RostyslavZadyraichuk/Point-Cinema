@@ -12,6 +12,21 @@ import java.util.List;
  * Represents a user entity in the system.
  * This class is mapped to the "user" collection in the database and stores
  * personal information, authentication details, and user-related associations.
+ *
+ * <p>
+ * This class uses Lombok annotations to reduce boilerplate code:
+ * <ul>
+ * <li>{@code @Getter} generates getters for all fields.</li>
+ * <li>{@code @Setter} generates a setter for the {@code id} field.</li>
+ * <li>{@code @AllArgsConstructor} generates a constructor for all fields.</li>
+ * <li>{@code @Builder} implements builder pattern.</li>
+ * <li>{@code @Indexed} and {@code @CompoundIndex} define fields are indexed in database for quicker search.
+ * Key {@code unique = true} means database supports uniqueness of marked fields additionally.</li>
+ * </ul>
+ * </p>
+ *
+ * @author Rostyslav Zadyraichuk
+ * @version 0.2
  */
 @Document(collection = "user")
 @AllArgsConstructor
@@ -24,7 +39,6 @@ public class User {
      * This field is indexed and must be unique.
      */
     @Id
-    @Indexed(unique = true)
     @Setter
     private String id;
 
@@ -50,16 +64,19 @@ public class User {
     /**
      * The username of the user, used for authentication and identification.
      */
+    @Indexed(unique = true)
     private final String username;
 
     /**
      * The email address of the user, used for communication and notifications.
      */
+    @Indexed(unique = true)
     private final String email;
 
     /**
      * The phone number of the user for authentication purposes.
      */
+    @Indexed(unique = true)
     private final String phone;
 
     /**

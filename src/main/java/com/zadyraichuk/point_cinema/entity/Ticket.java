@@ -18,11 +18,13 @@ import java.time.LocalDate;
  * <li>{@code @Setter} generates a setter for the {@code id} field.</li>
  * <li>{@code @AllArgsConstructor} generates a constructor for all fields.</li>
  * <li>{@code @Builder} implements builder pattern.</li>
+ * <li>{@code @Indexed} and {@code @CompoundIndex} define fields are indexed in database for quicker search.
+ * Key {@code unique = true} means database supports uniqueness of marked fields additionally.</li>
  * </ul>
  * </p>
  *
  * @author Rostyslav Zadyraichuk
- * @version 0.1
+ * @version 0.2
  */
 @Document(collection = "ticket")
 @AllArgsConstructor
@@ -35,7 +37,6 @@ public class Ticket {
      * This field is indexed and must be unique.
      */
     @Id
-    @Indexed(unique = true)
     @Setter
     private String id;
 
@@ -62,12 +63,14 @@ public class Ticket {
      * The identifier of the seance (movie screening) for which the ticket is booked.
      */
     @Field(name = "seance_id")
+    @Indexed
     private final String seanceId;
 
     /**
      * The identifier of the user who booked the ticket.
      */
     @Field(name = "user_id")
+    @Indexed
     private final String userId;
 
     /**

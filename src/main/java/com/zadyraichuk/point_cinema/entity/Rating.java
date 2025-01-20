@@ -2,7 +2,7 @@ package com.zadyraichuk.point_cinema.entity;
 
 import lombok.*;
 import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.index.Indexed;
+import org.springframework.data.mongodb.core.index.CompoundIndex;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
 
@@ -17,15 +17,18 @@ import org.springframework.data.mongodb.core.mapping.Field;
  * <li>{@code @Setter} generates a setter for the {@code id} field.</li>
  * <li>{@code @RequiredArgsConstructor} generates a constructor for {@code userRating}, {@code userId} and
  * {@code movieId}, which are final fields.</li>
+ * <li>{@code @Indexed} and {@code @CompoundIndex} define fields are indexed in database for quicker search.
+ * Key {@code unique = true} means database supports uniqueness of marked fields additionally.</li>
  * </ul>
  * </p>
  *
  * @author Rostyslav Zadyraichuk
- * @version 0.1
+ * @version 0.2
  */
 @Document(collection = "rating")
 @RequiredArgsConstructor
 @Getter
+@CompoundIndex(def = "{'movieId': 1, 'userId': 1}", unique = true)
 public class Rating {
 
     /**
@@ -33,7 +36,6 @@ public class Rating {
      * This field is indexed and must be unique.
      */
     @Id
-    @Indexed(unique = true)
     @Setter
     private String id;
 
