@@ -13,8 +13,8 @@ class LangTest {
     @Test
     @DisplayName("Test enum values array is valid")
     void testValues() {
-        Lang[] expected = getArrayOfLanguages();
-        Lang[] actual = Lang.values();
+        Language[] expected = getArrayOfLanguages();
+        Language[] actual = Language.values();
 
         assertNotNull(actual, "Enum cannot be null");
         assertNotEquals(0, actual.length, "Enum length should not be zero");
@@ -27,31 +27,31 @@ class LangTest {
     @DisplayName("Test valueOf method with null value")
     void testValueOf_whenNull() {
         assertThrows(NullPointerException.class,
-                () -> Lang.valueOf(null),
+                () -> Language.valueOf(null),
                 "Enum should not be returned from null value");
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {"ENG", "UKR"})
+    @ValueSource(strings = {"EN", "UA"})
     @DisplayName("Test valueOf method with valid values")
     void testValueOf_whenValidValue(String value) {
-        assertDoesNotThrow(() -> Lang.valueOf(value), "Enum should be returned from valid value");
+        assertDoesNotThrow(() -> Language.valueOf(value), "Enum should be returned from valid value");
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {"eng", "", "Pol", "123", "UA"})
+    @ValueSource(strings = {"en", "", "Pol", "123", "ENG"})
     @DisplayName("Test valueOf method with invalid values")
     void testValueOf_whenInvalidValue(String value) {
         assertThrows(IllegalArgumentException.class,
-                () -> Lang.valueOf(value),
+                () -> Language.valueOf(value),
                 "Enum should not be returned from invalid value");
     }
 
-    private Lang[] getArrayOfLanguages() {
-        return new Lang[]{
-                Lang.ENG,
-                Lang.UKR,
-                Lang.POL
+    private Language[] getArrayOfLanguages() {
+        return new Language[]{
+                Language.EN,
+                Language.UA,
+                Language.PL
         };
     }
 
