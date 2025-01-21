@@ -15,15 +15,16 @@ import org.springframework.data.mongodb.core.mapping.Document;
  * <li>{@code @Setter} generates a setter for the {@code id} field.</li>
  * <li>{@code @RequiredArgsConstructor} generates a constructor for {@code name}, {@code country}, {@code city} and
  * {@code street}, which are final fields.</li>
+ * <li>{@code @EqualsAndHashCode} overrides equals and hashCode methods.</li>
  * </ul>
  * </p>
  *
  * @author Rostyslav Zadyraichuk
- * @version 0.2
  */
 @Document(collection = "cinema")
 @RequiredArgsConstructor
 @Getter
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class Cinema {
 
     /**
@@ -32,6 +33,7 @@ public class Cinema {
      */
     @Id
     @Setter
+    @EqualsAndHashCode.Include
     private String id;
 
     /**
