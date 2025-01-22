@@ -1,13 +1,13 @@
 package com.zadyraichuk.point_cinema.repository;
 
-import com.zadyraichuk.point_cinema.entity.Cinema;
 import com.zadyraichuk.point_cinema.entity.Comment;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.CsvSource;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.data.mongo.DataMongoTest;
@@ -20,6 +20,7 @@ import java.time.temporal.ChronoUnit;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -31,7 +32,7 @@ class CommentRepositoryTest {
     @Autowired
     private CommentRepository commentRepository;
 
-    private Comment comment;
+    private static Comment comment;
 
     @BeforeEach
     void setUp() {
@@ -199,23 +200,16 @@ class CommentRepositoryTest {
     }
 
     @ParameterizedTest
-    @CsvSource(delimiter = '|', textBlock = """
-                1 | 1 | 0
-                2 | 2 | 1,3
-                3 | 1 | 2
-            """)
+    @MethodSource("provideArgumentsForFindByMovieIdTest")
     @DisplayName("Test finding a Comment by Movie ID")
     void testFindByMovieId(String movieId,
                            int expectedSize,
-                           String expectedCommentsIndexesArray) {
+                           int[] expectedCommentsIndexes) {
         Comment[] comments = getCommentsForSpecializedTests();
         commentRepository.saveAll(Arrays.asList(comments));
 
         List<Comment> foundComments = commentRepository.findByMovieId(movieId);
         Page<Comment> foundCommentsPage = commentRepository.findByMovieId(movieId, Pageable.ofSize(10).first());
-        int[] expectedCommentsIndexes = Arrays.stream(expectedCommentsIndexesArray.split(","))
-                .mapToInt(Integer::parseInt)
-                .toArray();
 
         assertNotNull(foundComments, "The result should not be null");
         assertNotNull(foundCommentsPage, "The result should not be null");
@@ -232,22 +226,16 @@ class CommentRepositoryTest {
     }
 
     @ParameterizedTest
-    @CsvSource(delimiter = '|', textBlock = """
-                1 | 3 | 0,2,3
-                2 | 1 | 1
-            """)
+    @MethodSource("provideArgumentsForFindByUserIdTest")
     @DisplayName("Test finding a Comment by User ID")
     void testFindByUserId(String userId,
                           int expectedSize,
-                          String expectedCommentsIndexesArray) {
+                          int[] expectedCommentsIndexes) {
         Comment[] comments = getCommentsForSpecializedTests();
         commentRepository.saveAll(Arrays.asList(comments));
 
         List<Comment> foundComments = commentRepository.findByUserId(userId);
         Page<Comment> foundCommentsPage = commentRepository.findByUserId(userId, Pageable.ofSize(10).first());
-        int[] expectedCommentsIndexes = Arrays.stream(expectedCommentsIndexesArray.split(","))
-                .mapToInt(Integer::parseInt)
-                .toArray();
 
         assertNotNull(foundComments, "The result should not be null");
         assertNotNull(foundCommentsPage, "The result should not be null");
@@ -288,6 +276,21 @@ class CommentRepositoryTest {
         Comment comment4 = new Comment(null, LocalDateTime.now(), "4", "1", "2", "4");
 
         return new Comment[]{comment1, comment2, comment3, comment4};
+    }
+
+    private static Stream<Arguments> provideArgumentsForFindByMovieIdTest() {
+        return Stream.of(
+                Arguments.of("1", 1, new int[]{0}),
+                Arguments.of("2", 2, new int[]{1, 3}),
+                Arguments.of("3", 1, new int[]{2})
+        );
+    }
+
+    private static Stream<Arguments> provideArgumentsForFindByUserIdTest() {
+        return Stream.of(
+                Arguments.of("1", 3, new int[]{0, 2, 3}),
+                Arguments.of("2", 1, new int[]{1})
+        );
     }
 
 }

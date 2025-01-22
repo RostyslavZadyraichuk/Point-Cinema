@@ -27,7 +27,7 @@ class CinemaRepositoryTest {
     @Autowired
     private CinemaRepository cinemaRepository;
 
-    private Cinema cinema;
+    private static Cinema cinema;
 
     @BeforeEach
     void setUp() {
@@ -153,20 +153,16 @@ class CinemaRepositoryTest {
     }
 
     @ParameterizedTest
-    @MethodSource("provideArgumentsForFindByCountryAndCity")
+    @MethodSource("provideArgumentsForFindByCountryAndCityTest")
     @DisplayName("Test finding a Cinema by Country and City")
     void testFindByCountryAndCity(Country country,
                                   String city,
                                   int expectedSize,
-                                  String expectedCinemasIndexesArray) {
-        Cinema[] cinemas = getCinemasForSpecializedFindTests();
+                                  int[] expectedCinemasIndexes) {
+        Cinema[] cinemas = getCinemasForSpecializedTests();
         cinemaRepository.saveAll(Arrays.asList(cinemas));
 
         List<Cinema> foundCinemas = cinemaRepository.findByCountryAndCity(country, city);
-        int[] expectedCinemasIndexes = expectedCinemasIndexesArray.isEmpty() ? new int[0] :
-                Arrays.stream(expectedCinemasIndexesArray.split(","))
-                        .mapToInt(Integer::parseInt)
-                        .toArray();
 
         assertNotNull(foundCinemas, "The result should not be null");
         assertEquals(expectedSize, foundCinemas.size(),
@@ -176,24 +172,24 @@ class CinemaRepositoryTest {
         }
     }
 
-    private static Stream<Arguments> provideArgumentsForFindByCountryAndCity() {
+    private static Stream<Arguments> provideArgumentsForFindByCountryAndCityTest() {
         return Stream.of(
-                Arguments.of(Country.UKRAINE, "a", 1, "2"),
-                Arguments.of(Country.UNITED_KINGDOM, "a", 1, "1"),
-                Arguments.of(Country.POLAND, "a", 1, "3"),
-                Arguments.of(Country.UKRAINE, "iv", 2, "0,2"),
-                Arguments.of(Country.POLAND, "iv", 0, ""),
-                Arguments.of(Country.UKRAINE, "Lviv", 1, "0"),
-                Arguments.of(Country.UKRAINE, "iv", 2, "0,2"),
-                Arguments.of(Country.UKRAINE, "Iv", 2, "0,2"),
-                Arguments.of(Country.UKRAINE, "iV", 2, "0,2"),
-                Arguments.of(Country.UKRAINE, "IV", 2, "0,2"),
-                Arguments.of(Country.UKRAINE, "", 3, "0,2"),
-                Arguments.of(Country.UNITED_KINGDOM, "", 1, "1"),
-                Arguments.of(Country.POLAND, "", 1, "3"),
-                Arguments.of(Country.UKRAINE, "123", 0, ""),
-                Arguments.of(Country.UNITED_KINGDOM, "123", 0, ""),
-                Arguments.of(Country.POLAND, "123", 0, "")
+                Arguments.of(Country.UKRAINE, "a", 1, new int[]{2}),
+                Arguments.of(Country.UNITED_KINGDOM, "a", 1, new int[]{1}),
+                Arguments.of(Country.POLAND, "a", 1, new int[]{3}),
+                Arguments.of(Country.UKRAINE, "iv", 2, new int[]{0, 2}),
+                Arguments.of(Country.POLAND, "iv", 0, new int[]{}),
+                Arguments.of(Country.UKRAINE, "Lviv", 1, new int[]{0}),
+                Arguments.of(Country.UKRAINE, "iv", 2, new int[]{0, 2}),
+                Arguments.of(Country.UKRAINE, "Iv", 2, new int[]{0, 2}),
+                Arguments.of(Country.UKRAINE, "iV", 2, new int[]{0, 2}),
+                Arguments.of(Country.UKRAINE, "IV", 2, new int[]{0, 2}),
+                Arguments.of(Country.UKRAINE, "", 3, new int[]{0, 2}),
+                Arguments.of(Country.UNITED_KINGDOM, "", 1, new int[]{1}),
+                Arguments.of(Country.POLAND, "", 1, new int[]{3}),
+                Arguments.of(Country.UKRAINE, "123", 0, new int[]{}),
+                Arguments.of(Country.UNITED_KINGDOM, "123", 0, new int[]{}),
+                Arguments.of(Country.POLAND, "123", 0, new int[]{})
         );
     }
 
@@ -209,7 +205,7 @@ class CinemaRepositoryTest {
         return new Cinema[]{unique1, unique2, unique3};
     }
 
-    private Cinema[] getCinemasForSpecializedFindTests() {
+    private Cinema[] getCinemasForSpecializedTests() {
         Cinema cinema1 = new Cinema("1", Country.UKRAINE, "Lviv", "1");
         Cinema cinema2 = new Cinema("2", Country.UNITED_KINGDOM, "Nottingham", "2");
         Cinema cinema3 = new Cinema("3", Country.UKRAINE, "Kharkiv", "3");
