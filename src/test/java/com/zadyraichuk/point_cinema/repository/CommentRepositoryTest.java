@@ -23,7 +23,7 @@ import java.util.Optional;
 import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
-
+//TODO make fail messages formatted for better clarity
 @DisplayName("Comment repository tests")
 @DataMongoTest
 @ActiveProfiles("test")
@@ -204,7 +204,7 @@ class CommentRepositoryTest {
     @DisplayName("Test finding a Comment by Movie ID")
     void testFindByMovieId(String movieId,
                            int expectedSize,
-                           int[] expectedCommentsIndexes) {
+                           int[] expectedCommentIndexes) {
         Comment[] comments = getCommentsForSpecializedTests();
         commentRepository.saveAll(Arrays.asList(comments));
 
@@ -219,7 +219,7 @@ class CommentRepositoryTest {
                 String.format("The result should contain %d comments with movieId '%s'", expectedSize, movieId));
         assertEquals(1, foundCommentsPage.getTotalPages(), "The result should contain 1 page");
 
-        for (int i : expectedCommentsIndexes) {
+        for (int i : expectedCommentIndexes) {
             assertTrue(foundComments.contains(comments[i]), "Comment should be in the result");
             assertTrue(foundCommentsPage.getContent().contains(comments[i]), "Comment should be in the result");
         }
@@ -230,7 +230,7 @@ class CommentRepositoryTest {
     @DisplayName("Test finding a Comment by User ID")
     void testFindByUserId(String userId,
                           int expectedSize,
-                          int[] expectedCommentsIndexes) {
+                          int[] expectedCommentIndexes) {
         Comment[] comments = getCommentsForSpecializedTests();
         commentRepository.saveAll(Arrays.asList(comments));
 
@@ -245,7 +245,7 @@ class CommentRepositoryTest {
                 String.format("The result should contain %d comments with userId '%s'", expectedSize, userId));
         assertEquals(1, foundCommentsPage.getTotalPages(), "The result should contain 1 page");
 
-        for (int i : expectedCommentsIndexes) {
+        for (int i : expectedCommentIndexes) {
             assertTrue(foundComments.contains(comments[i]), "Comment should be in the result");
             assertTrue(foundCommentsPage.getContent().contains(comments[i]), "Comment should be in the result");
         }

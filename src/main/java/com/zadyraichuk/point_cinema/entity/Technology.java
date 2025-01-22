@@ -16,7 +16,6 @@ import lombok.RequiredArgsConstructor;
  * </p>
  *
  * @author Rostyslav Zadyraichuk
- * @version 0.2
  */
 @RequiredArgsConstructor
 @Getter

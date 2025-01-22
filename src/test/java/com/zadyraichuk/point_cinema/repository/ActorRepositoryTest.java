@@ -16,7 +16,7 @@ import java.util.Optional;
 import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
-
+//TODO make fail messages formatted for better clarity
 @DisplayName("Actor repository tests")
 @DataMongoTest
 @ActiveProfiles("test")
@@ -39,7 +39,7 @@ class ActorRepositoryTest {
     }
 
     @ParameterizedTest
-    @MethodSource("provideArgumentsForCreateTest")
+    @MethodSource("provideArgumentsForCreateAndUpdateTests")
     @DisplayName("Test creating an Actor")
     void testCreate(String firstName, String lastName, String pictureId, boolean shouldThrowException) {
         Actor actorLocal = new Actor(firstName, lastName, pictureId);
@@ -81,7 +81,7 @@ class ActorRepositoryTest {
 
         assertNotNull(foundActors, "The found list should not be null");
         assertFalse(foundActors.isEmpty(), "The found list should not be empty");
-        assertEquals(expectedLength, foundActors.size(), "There should be 3 actors in the collection.");
+        assertEquals(expectedLength, foundActors.size(), "The size of the list should match the number of actors saved");
 
         for (Actor a : actors) {
             assertTrue(foundActors.contains(a), "The found actors should contain all actors saved before");
@@ -89,7 +89,7 @@ class ActorRepositoryTest {
     }
 
     @ParameterizedTest
-    @MethodSource("provideArgumentsForUpdateTest")
+    @MethodSource("provideArgumentsForCreateAndUpdateTests")
     @DisplayName("Test updating an Actor")
     void testUpdate(String firstName, String lastName, String pictureId, boolean shouldThrowException) {
         Actor actorBeforeUpdate = new Actor("BeforeUpdate", "BeforeUpdate", "BeforeUpdate");
@@ -201,19 +201,9 @@ class ActorRepositoryTest {
         }
     }
 
-    private static Stream<Arguments> provideArgumentsForCreateTest() {
+    private static Stream<Arguments> provideArgumentsForCreateAndUpdateTests() {
         return Stream.of(
-                Arguments.of("Created", "Created", "Created", false),
-                Arguments.of(actor.getFirstName(), "Unique", "Unique", false),
-                Arguments.of("Unique", actor.getLastName(), "Unique", false),
                 Arguments.of("Unique", "Unique", "Unique", false),
-                Arguments.of(actor.getFirstName(), actor.getLastName(), "Unique", true)
-        );
-    }
-
-    private static Stream<Arguments> provideArgumentsForUpdateTest() {
-        return Stream.of(
-                Arguments.of("UpdatedFirstName", "UpdatedLastName", "UpdatedPictureId", false),
                 Arguments.of(actor.getFirstName(), "Unique", "Unique", false),
                 Arguments.of("Unique", actor.getLastName(), "Unique", false),
                 Arguments.of(actor.getFirstName(), actor.getLastName(), "Unique", true)
