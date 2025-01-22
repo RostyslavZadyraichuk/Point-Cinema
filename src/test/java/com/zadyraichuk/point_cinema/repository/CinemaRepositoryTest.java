@@ -128,6 +128,15 @@ class CinemaRepositoryTest {
     }
 
     @Test
+    @DisplayName("Test deleting a Cinema by ID")
+    void testDeleteById() {
+        cinemaRepository.deleteById(cinema.getId());
+
+        Optional<Cinema> deletedCinemaOpt = cinemaRepository.findById(cinema.getId());
+        assertFalse(deletedCinemaOpt.isPresent(), "The cinema should be deleted and not found by ID");
+    }
+
+    @Test
     @DisplayName("Test deleting all Cinemas")
     void testDeleteAll() {
         Cinema[] cinemas = getCinemasForGeneralCrudTests();

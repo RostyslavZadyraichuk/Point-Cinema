@@ -190,6 +190,15 @@ class ActorRepositoryTest {
     }
 
     @Test
+    @DisplayName("Test deleting an Actor by ID")
+    void testDeleteById() {
+        actorRepository.deleteById(actor.getId());
+
+        Optional<Actor> deletedActorOpt = actorRepository.findById(actor.getId());
+        assertFalse(deletedActorOpt.isPresent(), "The actor should be deleted and not found by ID");
+    }
+
+    @Test
     @DisplayName("Test deleting all Actors")
     void testDeleteAll() {
         Actor[] actors = getActorsForGeneralCrudTests(false);

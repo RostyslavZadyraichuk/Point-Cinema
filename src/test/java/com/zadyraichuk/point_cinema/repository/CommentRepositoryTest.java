@@ -142,6 +142,16 @@ class CommentRepositoryTest {
         assertFalse(deletedCommentOpt.isPresent(), "The comment should be deleted and not found by ID");
     }
 
+
+    @Test
+    @DisplayName("Test deleting a Comment by ID")
+    void testDeleteById() {
+        commentRepository.deleteById(comment.getId());
+
+        Optional<Comment> deletedCommentOpt = commentRepository.findById(comment.getId());
+        assertFalse(deletedCommentOpt.isPresent(), "The comment should be deleted and not found by ID");
+    }
+
     @ParameterizedTest
     @ValueSource(strings = {"1", "2"})
     @DisplayName("Test deleting all comments by user ID")
