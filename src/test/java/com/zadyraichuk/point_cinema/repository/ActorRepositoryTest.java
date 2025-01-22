@@ -2,6 +2,8 @@ package com.zadyraichuk.point_cinema.repository;
 
 import com.zadyraichuk.point_cinema.entity.Actor;
 import org.junit.jupiter.api.*;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.data.mongo.DataMongoTest;
 import org.springframework.dao.DuplicateKeyException;
@@ -49,12 +51,12 @@ class ActorRepositoryTest {
 
     @Test
     @DisplayName("Test unique combination of First Name and Last Name whilst creation")
-    void testCreate_whenUniqueFirstNameAndLastName () {
+    void testCreate_whenUniqueFirstNameAndLastName() {
         Actor[] actors = getActorsForGeneralCrudTests(false);
 
-        assertDoesNotThrow(() -> actorRepository.save(actors[0]));
-        assertDoesNotThrow(() -> actorRepository.save(actors[1]));
-        assertDoesNotThrow(() -> actorRepository.save(actors[2]));
+        for (Actor a : actors) {
+            assertDoesNotThrow(() -> actorRepository.save(a));
+        }
     }
 
     @Test
@@ -69,33 +71,30 @@ class ActorRepositoryTest {
     @Test
     @DisplayName("Test finding an Actor by ID")
     void testFindById() {
-        Optional<Actor> retrievedActorOpt = actorRepository.findById(actor.getId());
-        assertTrue(retrievedActorOpt.isPresent(), "The actor should be found by ID");
+        Optional<Actor> foundActorOpt = actorRepository.findById(actor.getId());
+        assertTrue(foundActorOpt.isPresent(), "The actor should be found by ID");
 
-        Actor retrievedActor = retrievedActorOpt.get();
-        assertEquals(actor.getId(), retrievedActor.getId(), "The IDs should match");
-        assertEquals(actor.getFirstName(), retrievedActor.getFirstName(), "The first name should match");
-        assertEquals(actor.getLastName(), retrievedActor.getLastName(), "The last name should match");
-        assertEquals(actor.getPictureId(), retrievedActor.getPictureId(), "The picture ID should match");
+        Actor foundActor = foundActorOpt.get();
+        assertEquals(actor.getId(), foundActor.getId(), "The IDs should match");
+        assertEquals(actor.getFirstName(), foundActor.getFirstName(), "The first name should match");
+        assertEquals(actor.getLastName(), foundActor.getLastName(), "The last name should match");
+        assertEquals(actor.getPictureId(), foundActor.getPictureId(), "The picture ID should match");
     }
 
     @Test
     @DisplayName("Test finding all Actors")
     void testFindAll() {
-        Actor[] actors = getActorsForFindTests();
+        Actor[] actors = getActorsForGeneralCrudTests(false);
         actorRepository.saveAll(Arrays.asList(actors));
         int expectedLength = actors.length + 1;
-        List<Actor> retrievedActors = actorRepository.findAll();
+        List<Actor> foundActors = actorRepository.findAll();
 
-        assertNotNull(retrievedActors, "The retrieved list should not be null");
-        assertFalse(retrievedActors.isEmpty(), "The retrieved list should not be empty");
-        assertEquals(expectedLength, retrievedActors.size(), "There should be 3 actors in the collection.");
+        assertNotNull(foundActors, "The found list should not be null");
+        assertFalse(foundActors.isEmpty(), "The found list should not be empty");
+        assertEquals(expectedLength, foundActors.size(), "There should be 3 actors in the collection.");
 
-        List<String> retrievedActorIds = retrievedActors.stream()
-                .map(Actor::getId)
-                .toList();
         for (Actor a : actors) {
-            assertTrue(retrievedActorIds.contains(a.getId()), "The retrieved actors should contain all actors saved before");
+            assertTrue(foundActors.contains(a), "The found actors should contain all actors saved before");
         }
     }
 
@@ -115,48 +114,48 @@ class ActorRepositoryTest {
     @Test
     @DisplayName("Test reset updated Actor with previous First Name and Last Name")
     void testUpdate_whenChangeBack() {
-        Actor newValues = new Actor("New", "New", "New");
-        newValues.setId(actor.getId());
-        assertDoesNotThrow(() -> actorRepository.save(newValues));
+        Actor newValuesActor = new Actor("New", "New", "New");
+        newValuesActor.setId(actor.getId());
+        assertDoesNotThrow(() -> actorRepository.save(newValuesActor));
 
-        Actor oldValues = initActor();
-        oldValues.setId(actor.getId());
-        assertDoesNotThrow(() -> actorRepository.save(oldValues));
+        Actor oldValuesActor = initActor();
+        oldValuesActor.setId(actor.getId());
+        assertDoesNotThrow(() -> actorRepository.save(oldValuesActor));
 
         Optional<Actor> foundActorOpt = actorRepository.findById(actor.getId());
         assertTrue(foundActorOpt.isPresent(), "The actor should be found by ID");
         Actor foundActor = foundActorOpt.get();
 
-        assertEquals(oldValues.getFirstName(), foundActor.getFirstName(), "The first name should be updated back");
-        assertNotEquals(newValues.getFirstName(), foundActor.getFirstName(), "The first name should not be the same as updated first time");
+        assertEquals(oldValuesActor.getFirstName(), foundActor.getFirstName(), "The first name should be updated back");
+        assertNotEquals(newValuesActor.getFirstName(), foundActor.getFirstName(), "The first name should not be the same as updated first time");
         assertEquals(actor.getFirstName(), foundActor.getFirstName(), "The first name should be the same as initial value");
 
-        assertEquals(oldValues.getLastName(), foundActor.getLastName(), "The last name should be updated back");
-        assertNotEquals(newValues.getLastName(), foundActor.getLastName(), "The last name should not be the same as updated first time");
+        assertEquals(oldValuesActor.getLastName(), foundActor.getLastName(), "The last name should be updated back");
+        assertNotEquals(newValuesActor.getLastName(), foundActor.getLastName(), "The last name should not be the same as updated first time");
         assertEquals(actor.getLastName(), foundActor.getLastName(), "The last name should be the same as initial value");
     }
 
     @Test
     @DisplayName("Test unique combination of First Name and Last Name whilst updating")
-    void testUpdate_whenUniqueFirstNameAndLastName () {
+    void testUpdate_whenUniqueFirstNameAndLastName() {
         Actor[] actors = getActorsForGeneralCrudTests(true);
 
-        assertDoesNotThrow(() -> actorRepository.save(actors[0]), "Actor with unique combination of first and last name should be updated");
-        assertDoesNotThrow(() -> actorRepository.save(actors[1]), "Actor with unique combination of first and last name should be updated");
-        assertDoesNotThrow(() -> actorRepository.save(actors[2]), "Actor with unique combination of first and last name should be updated");
+        for (Actor a : actors) {
+            assertDoesNotThrow(() -> actorRepository.save(a), "Actor with unique combination of first and last name should be updated");
+        }
     }
 
     @Test
     @DisplayName("Test duplicate combination of First Name and Last Name whilst updating")
     void testUpdate_whenDuplicateFirstNameAndLastName() {
-        Actor unique = new Actor("Unique", "Unique", "Unique");
-        unique = actorRepository.save(unique);
+        Actor uniqueActor = new Actor("Unique", "Unique", "Unique");
+        uniqueActor = actorRepository.save(uniqueActor);
 
-        assertNotNull(unique.getId(), "The new unique Actor ID should exist");
-        assertNotEquals(unique.getId(), actor.getId(), "The new unique Actor and initial Actor IDs should not match");
+        assertNotNull(uniqueActor.getId(), "The new unique Actor ID should exist");
+        assertNotEquals(uniqueActor.getId(), actor.getId(), "The new unique Actor and initial Actor IDs should not match");
 
         Actor updatedUnique = new Actor(actor.getFirstName(), actor.getLastName(), actor.getPictureId());
-        updatedUnique.setId(unique.getId());
+        updatedUnique.setId(uniqueActor.getId());
 
         assertThrows(DuplicateKeyException.class, () -> actorRepository.save(updatedUnique),
                 "Actor with duplicate combination of first and last name should not be updated");
@@ -175,10 +174,10 @@ class ActorRepositoryTest {
             assertNotNull(a.getId(), "Each saved actor should have a generated ID");
         }
 
-        List<Actor> retrievedActors = actorRepository.findAll();
+        List<Actor> foundActors = actorRepository.findAll();
         int expectedSize = actors.length + 1;
-        assertEquals(expectedSize, retrievedActors.size(), "The number of actors retrieved should match the saved actors");
-        assertTrue(retrievedActors.containsAll(savedActors), "The retrieved actors should match the saved actors");
+        assertEquals(expectedSize, foundActors.size(), "The number of actors found should match the saved actors");
+        assertTrue(foundActors.containsAll(savedActors), "The found actors should match the saved actors");
     }
 
     @Test
@@ -193,126 +192,105 @@ class ActorRepositoryTest {
     @Test
     @DisplayName("Test deleting all Actors")
     void testDeleteAll() {
-        Actor[] actors = getActorsForFindTests();
+        Actor[] actors = getActorsForGeneralCrudTests(false);
         actorRepository.saveAll(Arrays.asList(actors));
 
-        List<Actor> actual = actorRepository.findAll();
-        assertNotNull(actual, "The actors should exist before deleting");
-        assertFalse(actual.isEmpty(), "The actors should exist before deleting");
+        List<Actor> foundActors = actorRepository.findAll();
+        assertNotNull(foundActors, "The actors should exist before deleting");
+        assertFalse(foundActors.isEmpty(), "The actors should exist before deleting");
 
         actorRepository.deleteAll();
-        actual = actorRepository.findAll();
-        assertNotNull(actual, "The actors should be deleted and actors list should not be null");
-        assertTrue(actual.isEmpty(), "The actors should be deleted and actors list should be empty");
+        foundActors = actorRepository.findAll();
+        assertNotNull(foundActors, "The actors should be deleted and actors list should not be null");
+        assertTrue(foundActors.isEmpty(), "The actors should be deleted and actors list should be empty");
     }
 
-    @Test
-    @DisplayName("Test finding an Actor by First Name or Last Name with valid pattern")
-    void testFindByFirstNameRegexOrLastNameRegex_whenValidPattern() {
-        Actor[] actors = getActorsForFindTests();
+    @ParameterizedTest
+    @CsvSource(delimiter = '|', textBlock = """
+                    One | 2 | 0,1
+                    one | 2 | 0,1
+                    Two | 2 | 0,2
+                    ''  | 4 | 0,1,2
+                    123 | 0 | ''
+            """)
+    @DisplayName("Test finding an Actor by First Name or Last Name")
+    void testFindByFirstNameOrLastName(String firstOrLastNamePattern,
+                                       int expectedSize,
+                                       String expectedActorIndexesArray) {
+        Actor[] actors = getActorsForSpecializedFindTests();
         actorRepository.saveAll(Arrays.asList(actors));
 
-        String pattern = "One";
-        List<Actor> actual = actorRepository.findByFirstNameRegexOrLastNameRegex(pattern, pattern);
+        List<Actor> foundActors = actorRepository.findByFirstNameOrLastName(firstOrLastNamePattern);
+        int[] expectedActorIndexes = expectedActorIndexesArray.isEmpty() ? new int[0] :
+                Arrays.stream(expectedActorIndexesArray.split(","))
+                        .mapToInt(Integer::parseInt)
+                        .toArray();
 
-        assertNotNull(actual, "The result should not be null");
-        assertEquals(2, actual.size(), "The result should contain 2 actors with pattern '" + pattern + "'");
-        assertTrue(actual.contains(actors[0]), "Actor should be in the result");
-        assertTrue(actual.contains(actors[1]), "Actor should be in the result");
-
-        pattern = "Two";
-        actual = actorRepository.findByFirstNameRegexOrLastNameRegex(pattern, pattern);
-
-        assertNotNull(actual, "The result should not be null");
-        assertEquals(2, actual.size(), "The result should contain 2 actors with pattern '" + pattern + "'");
-        assertTrue(actual.contains(actors[0]), "Actor should be in the result");
-        assertTrue(actual.contains(actors[2]), "Actor should be in the result");
-    }
-
-    @Test
-    @DisplayName("Test finding an Actor by First Name or Last Name with lower case")
-    void testFindByFirstNameRegexOrLastNameRegex_whenInvalidLowerCaseName() {
-        Actor[] actors = getActorsForFindTests();
-        actorRepository.saveAll(Arrays.asList(actors));
-
-        String pattern = "one";
-        List<Actor> actual = actorRepository.findByFirstNameRegexOrLastNameRegex(pattern, pattern);
-
-        assertNotNull(actual, "The result should not be null");
-        assertTrue(actual.isEmpty(), "The result should not contain any actors with pattern '" + pattern + "'");
-    }
-
-    @Test
-    @DisplayName("Test finding an Actor by First Name or Last Name with empty String pattern")
-    void testFindByFirstNameRegexOrLastNameRegex_whenEmptyStringPattern() {
-        Actor[] actors = getActorsForFindTests();
-        actorRepository.saveAll(Arrays.asList(actors));
-        int expectedSize = actors.length + 1;
-
-        String pattern = "";
-        List<Actor> actual = actorRepository.findByFirstNameRegexOrLastNameRegex(pattern, pattern);
-
-        assertNotNull(actual, "The result should not be null");
-        assertEquals(expectedSize, actual.size(), "The result should contain all actors with empty String pattern");
-        for (Actor value : actors) {
-            assertTrue(actual.contains(value), "Actor should be in the result");
+        assertNotNull(foundActors, "The result should not be null");
+        assertEquals(expectedSize, foundActors.size(),
+                String.format("The result should contain %d actors with firstOrLastName pattern '%s'", expectedSize, firstOrLastNamePattern));
+        for (int index : expectedActorIndexes) {
+            assertTrue(foundActors.contains(actors[index]), "Actor should be in the result");
         }
     }
 
-    @Test
-    @DisplayName("Test finding an Actor by First Name or Last Name with different parts")
-    void testFindByFirstNameRegexOrLastNameRegex_whenValidDifferentParts() {
-        Actor[] actors = getActorsForFindTests();
+    @ParameterizedTest
+    @CsvSource(delimiter = '|', textBlock = """
+                Three | 123  | 0 | ''
+                123   | Four | 0 | ''
+                One   | Two  | 1 | 0
+                one   | two  | 1 | 0
+                o     | t    | 1 | 0
+                O     | T    | 1 | 0
+                123   | 123  | 0 | ''
+                ''    | ''   | 4 | 0,1,2
+            """)
+    @DisplayName("Test finding an Actor by First Name and Last Name")
+    void testFindByFirstNameAndLastName(String firstNamePattern,
+                                        String lastNamePattern,
+                                        int expectedSize,
+                                        String expectedActorIndexesArray) {
+        Actor[] actors = getActorsForSpecializedFindTests();
         actorRepository.saveAll(Arrays.asList(actors));
 
-        String firstName = "Three";
-        String lastName = "Four";
-        List<Actor> actual = actorRepository.findByFirstNameRegexOrLastNameRegex(firstName, lastName);
+        List<Actor> foundActors = actorRepository.findByFirstNameAndLastName(firstNamePattern, lastNamePattern);
+        int[] expectedActorIndexes = expectedActorIndexesArray.isEmpty() ? new int[0] :
+                Arrays.stream(expectedActorIndexesArray.split(","))
+                        .mapToInt(Integer::parseInt)
+                        .toArray();
 
-        assertNotNull(actual, "The result should not be null");
-        assertEquals(2, actual.size(), "The result should contain 2 actors with pattern '" + firstName +
-                " " + lastName + "'");
-        assertTrue(actual.contains(actors[1]), "Actor should be in the result");
-        assertTrue(actual.contains(actors[2]), "Actor should be in the result");
-    }
-
-    @Test
-    @DisplayName("Test finding an Actor by First Name or Last Name with invalid pattern")
-    void testFindByFirstNameRegexOrLastNameRegex_whenInvalidPattern() {
-        Actor[] actors = getActorsForFindTests();
-        actorRepository.saveAll(Arrays.asList(actors));
-
-        String pattern = "123";
-        List<Actor> actual = actorRepository.findByFirstNameRegexOrLastNameRegex(pattern, pattern);
-
-        assertNotNull(actual, "The result should not be null");
-        assertTrue(actual.isEmpty(), "The result should not contain any actors with pattern '" + pattern + "'");
+        assertNotNull(foundActors, "The result should not be null");
+        assertEquals(expectedSize, foundActors.size(),
+                String.format("The result should contain %d actors with firstOrLastName pattern '%s %s'", expectedSize, firstNamePattern, lastNamePattern));
+        for (int index : expectedActorIndexes) {
+            assertTrue(foundActors.contains(actors[index]), "Actor should be in the result");
+        }
     }
 
     private Actor initActor() {
         return new Actor("John", "Doe", "picId");
     }
 
-    private Actor[] getActorsForGeneralCrudTests(boolean setOriginalId) {
+    private Actor[] getActorsForGeneralCrudTests(boolean setIdFromOriginal) {
         Actor unique1 = new Actor(actor.getFirstName(), "Unique", "Unique");
         Actor unique2 = new Actor("Unique", actor.getLastName(), "Unique");
         Actor unique3 = new Actor("Unique", "Unique", "Unique");
 
-        if (setOriginalId) {
+        if (setIdFromOriginal) {
             unique1.setId(actor.getId());
             unique2.setId(actor.getId());
             unique3.setId(actor.getId());
         }
 
-        return new Actor[] {unique1, unique2, unique3};
+        return new Actor[]{unique1, unique2, unique3};
     }
 
-    private Actor[] getActorsForFindTests() {
+    private Actor[] getActorsForSpecializedFindTests() {
         Actor actor1 = new Actor("One", "Two", "pic1");
         Actor actor2 = new Actor("Three", "ThreeOne", "pic2");
         Actor actor3 = new Actor("Two", "Four", "pic3");
 
-        return new Actor[] {actor1, actor2, actor3};
+        return new Actor[]{actor1, actor2, actor3};
     }
 
 }

@@ -3,6 +3,7 @@ package com.zadyraichuk.point_cinema.repository;
 import com.zadyraichuk.point_cinema.entity.Cinema;
 import com.zadyraichuk.point_cinema.entity.Country;
 import org.springframework.data.mongodb.repository.MongoRepository;
+import org.springframework.data.mongodb.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -27,6 +28,12 @@ public interface CinemaRepository extends MongoRepository<Cinema, String> {
      * @param city the regular expression to match against the cinema's city.
      * @return a list of cinemas located in the specified country and whose city matches the provided regex.
      */
-    List<Cinema> findAllByCountryAndCityContainingIgnoreCase(Country country, String city);
+    @Query("""
+            {
+                country: ?0,
+                city: {$regex: ?1, $options: 'i'}
+            }
+        """)
+    List<Cinema> findByCountryAndCity(Country country, String city);
 
 }
