@@ -145,7 +145,7 @@ class CinemaRepositoryTest {
 
     @ParameterizedTest
     @MethodSource("provideArgumentsForFindByCountryAndCity")
-    @DisplayName("Test finding a Cinema by Country and City with valid city")
+    @DisplayName("Test finding a Cinema by Country and City")
     void testFindByCountryAndCity(Country country,
                                   String city,
                                   int expectedSize,
