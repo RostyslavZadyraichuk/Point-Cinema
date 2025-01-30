@@ -15,7 +15,6 @@ import static org.junit.jupiter.api.Assertions.*;
 class MovieTest {
 
     private static String id;
-    private static String fullName;
     private static String name;
     private static String surname;
     private static String description;
@@ -37,7 +36,6 @@ class MovieTest {
     @BeforeAll
     static void beforeAll() {
         MovieTest.id = "1";
-        MovieTest.fullName = "test";
         MovieTest.name = "test";
         MovieTest.surname = "test";
         MovieTest.description = "test";
@@ -64,7 +62,6 @@ class MovieTest {
     @DisplayName("Test all-args constructor initializes fields correctly")
     void testAllArgsConstructor() {
         String idLocal = "100";
-        String fullNameLocal = "100";
         String nameLocal = "100";
         String surnameLocal = "100";
         String descriptionLocal = "100";
@@ -83,7 +80,6 @@ class MovieTest {
 
         movie = new Movie(
                 idLocal,
-                fullNameLocal,
                 nameLocal,
                 surnameLocal,
                 descriptionLocal,
@@ -102,7 +98,6 @@ class MovieTest {
         );
 
         assertEquals(idLocal, movie.getId(), "Id does not match the expected value");
-        assertEquals(fullNameLocal, movie.getFullName(), "Full name does not match the expected value");
         assertEquals(nameLocal, movie.getName(), "Name does not match the expected value");
         assertEquals(surnameLocal, movie.getSurname(), "Surname does not match the expected value");
         assertEquals(descriptionLocal, movie.getDescription(), "Description does not match the expected value");
@@ -133,7 +128,6 @@ class MovieTest {
     @DisplayName("Test getter methods for all fields")
     void testGetterMethods() {
         assertEquals(MovieTest.id, movie.getId(), "Getter for id returned an unexpected value");
-        assertEquals(MovieTest.fullName, movie.getFullName(), "Full name does not match the expected value");
         assertEquals(MovieTest.name, movie.getName(), "Name does not match the expected value");
         assertEquals(MovieTest.surname, movie.getSurname(), "Surname does not match the expected value");
         assertEquals(MovieTest.description, movie.getDescription(), "Description does not match the expected value");
@@ -154,7 +148,6 @@ class MovieTest {
     private Movie initMovie() {
         return Movie.builder()
                 .id(MovieTest.id)
-                .fullName(MovieTest.fullName)
                 .name(MovieTest.name)
                 .surname(MovieTest.surname)
                 .description(MovieTest.description)
@@ -181,7 +174,6 @@ class MovieTest {
         @DisplayName("Test builder initializes fields correctly")
         void testBuilderInitialization() {
             String idLocal = "1000";
-            String fullNameLocal = "1000";
             String nameLocal = "1000";
             String surnameLocal = "1000";
             String descriptionLocal = "1000";
@@ -200,7 +192,6 @@ class MovieTest {
 
             movie = Movie.builder()
                     .id(idLocal)
-                    .fullName(fullNameLocal)
                     .name(nameLocal)
                     .surname(surnameLocal)
                     .description(descriptionLocal)
@@ -219,7 +210,6 @@ class MovieTest {
                     .build();
 
             assertEquals(idLocal, movie.getId(), "Id does not match the expected value");
-            assertEquals(fullNameLocal, movie.getFullName(), "Full name does not match the expected value");
             assertEquals(nameLocal, movie.getName(), "Name does not match the expected value");
             assertEquals(surnameLocal, movie.getSurname(), "Surname does not match the expected value");
             assertEquals(descriptionLocal, movie.getDescription(), "Description does not match the expected value");

@@ -8,7 +8,6 @@ import lombok.Getter;
  *
  *
  * @author Rostyslav Zadyraichuk
- * @version 0.1
  */
 @AllArgsConstructor
 @Getter
