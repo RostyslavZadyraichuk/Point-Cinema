@@ -19,11 +19,11 @@ import org.springframework.data.mongodb.core.mapping.Document;
  * </p>
  *
  * @author Rostyslav Zadyraichuk
- * @version 0.2
  */
 @Document(collection = "pictures")
 @RequiredArgsConstructor
 @Getter
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class Picture {
 
     /**
@@ -37,6 +37,7 @@ public class Picture {
      */
     @Id
     @Setter
+    @EqualsAndHashCode.Include
     private String id;
 
     /**
