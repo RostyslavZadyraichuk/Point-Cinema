@@ -7,6 +7,8 @@ import org.springframework.stereotype.Repository;
 /**
  * Repository interface for performing CRUD operations and custom queries on the {@link Message} collection.
  *
+ * @see MongoRepository
+ * @see Message
  * @author Rostyslav Zadyraichuk
  */
 @Repository

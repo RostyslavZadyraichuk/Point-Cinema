@@ -11,6 +11,8 @@ import java.util.List;
 /**
  * Repository interface for performing CRUD operations and custom queries on the {@link Comment} collection.
  *
+ * @see MongoRepository
+ * @see Comment
  * @author Rostyslav Zadyraichuk
  */
 @Repository

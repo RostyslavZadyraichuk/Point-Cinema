@@ -11,6 +11,8 @@ import java.util.List;
 /**
  * Repository interface for performing CRUD operations and custom queries on the {@link Cinema} collection.
  *
+ * @see MongoRepository
+ * @see Cinema
  * @author Rostyslav Zadyraichuk
  */
 @Repository

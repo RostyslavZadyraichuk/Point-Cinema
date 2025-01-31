@@ -10,6 +10,8 @@ import java.util.List;
 /**
  * Repository interface for performing CRUD operations and custom queries on the {@link Hall} collection.
  *
+ * @see MongoRepository
+ * @see Hall
  * @author Rostyslav Zadyraichuk
  */
 @Repository

@@ -10,6 +10,8 @@ import java.util.List;
 /**
  * Repository interface for performing CRUD operations and custom queries on the {@link Actor} collection.
  *
+ * @see MongoRepository
+ * @see Actor
  * @author Rostyslav Zadyraichuk
  */
 @Repository

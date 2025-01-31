@@ -2,6 +2,7 @@ package com.zadyraichuk.point_cinema.repository;
 
 import com.zadyraichuk.point_cinema.entity.Genre;
 import com.zadyraichuk.point_cinema.entity.Movie;
+import com.zadyraichuk.point_cinema.entity.Picture;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.mongodb.repository.MongoRepository;
@@ -14,6 +15,8 @@ import java.util.List;
 /**
  * Repository interface for performing CRUD operations and custom queries on the {@link Movie} collection.
  *
+ * @see MongoRepository
+ * @see Movie
  * @author Rostyslav Zadyraichuk
  */
 @Repository
