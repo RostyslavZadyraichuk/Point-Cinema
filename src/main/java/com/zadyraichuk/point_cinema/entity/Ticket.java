@@ -2,6 +2,7 @@ package com.zadyraichuk.point_cinema.entity;
 
 import lombok.*;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.index.CompoundIndex;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
@@ -20,6 +21,7 @@ import java.time.LocalDate;
  * <li>{@code @Builder} implements builder pattern.</li>
  * <li>{@code @Indexed} and {@code @CompoundIndex} define fields are indexed in database for quicker search.
  * Key {@code unique = true} means database supports uniqueness of marked fields additionally.</li>
+ * <li>{@code @EqualsAndHashCode} overrides equals and hashCode methods.</li>
  * </ul>
  * </p>
  *
@@ -30,6 +32,8 @@ import java.time.LocalDate;
 @AllArgsConstructor
 @Getter
 @Builder
+@CompoundIndex(def = "{'placeRow': 1, 'placeSeat': 1, 'seanceId': 1, 'date': 1}", unique = true)
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class Ticket {
 
     /**
@@ -38,6 +42,7 @@ public class Ticket {
      */
     @Id
     @Setter
+    @EqualsAndHashCode.Include
     private String id;
 
     /**
