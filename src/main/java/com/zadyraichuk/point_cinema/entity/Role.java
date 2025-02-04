@@ -3,6 +3,8 @@ package com.zadyraichuk.point_cinema.entity;
 /**
  * Represents the role of a user in the system.
  * Defines the user's level of access and permissions.
+ *
+ * @author Rostyslav Zadyraichuk
  */
 public enum Role {
 
@@ -22,5 +24,6 @@ public enum Role {
      * Cinema worker with specific operational permissions.
      * Has read/write access to main cinema represented entities, has no access to any User entity.
      */
-    WORKER;
+    WORKER
+
 }
