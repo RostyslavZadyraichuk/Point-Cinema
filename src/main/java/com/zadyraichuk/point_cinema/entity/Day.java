@@ -5,10 +5,8 @@ package com.zadyraichuk.point_cinema.entity;
  * Typically used in scheduling or organisational contexts.
  *
  * @author Rostyslav Zadyraichuk
- * @version 0.1
  */
 public enum Day {
-
     MONDAY,
     TUESDAY,
     WEDNESDAY,
@@ -16,5 +14,4 @@ public enum Day {
     FRIDAY,
     SATURDAY,
     SUNDAY
-
 }
