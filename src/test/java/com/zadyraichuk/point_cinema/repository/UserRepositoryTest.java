@@ -14,10 +14,7 @@ import org.springframework.boot.test.autoconfigure.data.mongo.DataMongoTest;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.test.context.ActiveProfiles;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -49,8 +46,8 @@ class UserRepositoryTest {
     @DisplayName("Test creating an User")
     void testCreate(String username, String email, String phone, boolean shouldThrowException) {
         User userLocal = new User(null, "Unique", "Unique", "Unique", username,
-                email, phone, Role.USER, "Unique", Collections.emptyList(), Collections.emptyList(),
-                Collections.emptyList(), Collections.emptyList());
+                email, phone, Role.USER, "Unique", Collections.emptySet(), Collections.emptySet(),
+                Collections.emptySet(), Collections.emptyList());
         assertNull(userLocal.getId(), "The user has just created should have no ID");
 
         if (shouldThrowException) {
@@ -104,10 +101,7 @@ class UserRepositoryTest {
         assertNotNull(foundUsers, "The found list should not be null");
         assertFalse(foundUsers.isEmpty(), "The found list should not be empty");
         assertEquals(expectedLength, foundUsers.size(), "The size of the list should match the number of users saved");
-
-        for (User a : users) {
-            assertTrue(foundUsers.contains(a), "The found users should contain all users saved before");
-        }
+        assertTrue(foundUsers.containsAll(Arrays.asList(users)), "The found users should contain all users saved before");
     }
 
     @ParameterizedTest
@@ -115,12 +109,12 @@ class UserRepositoryTest {
     @DisplayName("Test updating an User")
     void testUpdate(String username, String email, String phone, boolean shouldThrowException) {
         User userBeforeUpdate = new User(null, "Unique", "Unique", "Unique", "Unique1",
-                "Unique1", "Unique1", Role.USER, "Unique", Collections.emptyList(),
-                Collections.emptyList(), Collections.emptyList(), Collections.emptyList());
+                "Unique1", "Unique1", Role.USER, "Unique", Collections.emptySet(),
+                Collections.emptySet(), Collections.emptySet(), Collections.emptyList());
         userBeforeUpdate = userRepository.save(userBeforeUpdate);
         User updatedUser = new User(null, "Unique", "Unique", "Unique", username,
-                email, phone, Role.USER, "Unique", Collections.emptyList(),
-                Collections.emptyList(), Collections.emptyList(), Collections.emptyList());
+                email, phone, Role.USER, "Unique", Collections.emptySet(),
+                Collections.emptySet(), Collections.emptySet(), Collections.emptyList());
         updatedUser.setId(userBeforeUpdate.getId());
 
         if (shouldThrowException) {
@@ -151,9 +145,8 @@ class UserRepositoryTest {
 
         assertNotNull(savedUsers, "The saved users list should not be null");
         assertEquals(users.length, savedUsers.size(), "The size of the saved users should match the input list size");
-        for (User a : savedUsers) {
-            assertNotNull(a.getId(), "Each saved user should have a generated ID");
-        }
+        Stream<String> userIds = savedUsers.stream().map(User::getId);
+        assertTrue(userIds.allMatch(Objects::nonNull), "Each saved user should have a generated ID");
 
         List<User> foundUsers = userRepository.findAll();
         int expectedSize = users.length + 1;
@@ -209,9 +202,38 @@ class UserRepositoryTest {
         assertNotNull(foundUserOpt, "The result should not be null");
         assertEquals(foundUserOpt.isPresent(), shouldExists,
                 String.format("The result should contain user with username, email or phone '%s'", usernameOrEmailOrPhone));
-        if (foundUserOpt.isPresent()) {
-            assertEquals(foundUserOpt.get(), users[expectedUserIndex], "User should match the expected user");
-        }
+        foundUserOpt.ifPresent(value -> assertEquals(value, users[expectedUserIndex], "User should match the expected user"));
+    }
+
+    private User initUser() {
+        return User.builder()
+                .username("test")
+                .email("test")
+                .phone("test")
+                .firstName("test")
+                .lastName("test")
+                .password("test")
+                .role(Role.USER)
+                .pictureId("test")
+                .favouriteMovieIds(Collections.emptyList())
+                .viewedMovieIds(Collections.emptyList())
+                .waitMovieIds(Collections.emptyList())
+                .messageIds(Collections.emptyList())
+                .build();
+    }
+
+    private User[] getUsersForTests() {
+        User unique1 = new User(null, "Unique", "Unique", "Unique", "Unique1",
+                "Unique11", "Unique111", Role.USER, "Unique", Collections.emptySet(),
+                Collections.emptySet(), Collections.emptySet(), Collections.emptyList());
+        User unique2 = new User(null, "Unique", "Unique", "Unique", "Unique2",
+                "Unique22", "Unique222", Role.USER, "Unique", Collections.emptySet(),
+                Collections.emptySet(), Collections.emptySet(), Collections.emptyList());
+        User unique3 = new User(null, "Unique", "Unique", "Unique", "Unique3",
+                "Unique33", "Unique333", Role.USER, "Unique", Collections.emptySet(),
+                Collections.emptySet(), Collections.emptySet(), Collections.emptyList());
+
+        return new User[]{unique1, unique2, unique3};
     }
 
     /**
@@ -262,37 +284,6 @@ class UserRepositoryTest {
                 Arguments.of("Unique33", true, 2),
                 Arguments.of("Unique333", true, 2)
         );
-    }
-
-    private User initUser() {
-        return User.builder()
-                .username("test")
-                .email("test")
-                .phone("test")
-                .firstName("test")
-                .lastName("test")
-                .password("test")
-                .role(Role.USER)
-                .pictureId("test")
-                .favouriteMovieIds(Collections.emptyList())
-                .viewedMovieIds(Collections.emptyList())
-                .waitMovieIds(Collections.emptyList())
-                .messageIds(Collections.emptyList())
-                .build();
-    }
-
-    private User[] getUsersForTests() {
-        User unique1 = new User(null, "Unique", "Unique", "Unique", "Unique1",
-                "Unique11", "Unique111", Role.USER, "Unique", Collections.emptyList(),
-                Collections.emptyList(), Collections.emptyList(), Collections.emptyList());
-        User unique2 = new User(null, "Unique", "Unique", "Unique", "Unique2",
-                "Unique22", "Unique222", Role.USER, "Unique", Collections.emptyList(),
-                Collections.emptyList(), Collections.emptyList(), Collections.emptyList());
-        User unique3 = new User(null, "Unique", "Unique", "Unique", "Unique3",
-                "Unique33", "Unique333", Role.USER, "Unique", Collections.emptyList(),
-                Collections.emptyList(), Collections.emptyList(), Collections.emptyList());
-
-        return new User[]{unique1, unique2, unique3};
     }
 
 }

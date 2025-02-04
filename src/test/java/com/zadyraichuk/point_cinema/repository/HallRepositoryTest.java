@@ -16,10 +16,12 @@ import org.springframework.test.context.ActiveProfiles;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
+
 //TODO make fail messages formatted for better clarity
 @DisplayName("Hall repository tests")
 @DataMongoTest
@@ -94,10 +96,7 @@ class HallRepositoryTest {
         assertNotNull(foundHalls, "The found list should not be null");
         assertFalse(foundHalls.isEmpty(), "The found list should not be empty");
         assertEquals(expectedLength, foundHalls.size(), "The size of the list should match the number of halls saved");
-
-        for (Hall a : halls) {
-            assertTrue(foundHalls.contains(a), "The found halls should contain all halls saved before");
-        }
+        assertTrue(foundHalls.containsAll(Arrays.asList(halls)), "The found halls should contain all halls saved before");
     }
 
     @ParameterizedTest
@@ -136,9 +135,8 @@ class HallRepositoryTest {
 
         assertNotNull(savedHalls, "The saved halls list should not be null");
         assertEquals(halls.length, savedHalls.size(), "The size of the saved halls should match the input list size");
-        for (Hall a : savedHalls) {
-            assertNotNull(a.getId(), "Each saved hall should have a generated ID");
-        }
+        Stream<String> hallIds = savedHalls.stream().map(Hall::getId);
+        assertTrue(hallIds.allMatch(Objects::nonNull), "Each saved hall should have a generated ID");
 
         List<Hall> foundHalls = hallRepository.findAll();
         int expectedSize = halls.length + 1;
@@ -236,47 +234,6 @@ class HallRepositoryTest {
         }
     }
 
-    private static Stream<Arguments> provideArgumentsForCreateAndUpdateTests() {
-        return Stream.of(
-                Arguments.of(1, 1, 1, Technology.TECHNOLOGY_3D, "Unique", false),
-                Arguments.of(hall.getNumber(), 1, 1, Technology.TECHNOLOGY_3D, "Unique", false),
-                Arguments.of(100, 2, 2, Technology.TECHNOLOGY_3D, hall.getCinemaId(), false),
-                Arguments.of(hall.getNumber(), 1, 1, Technology.TECHNOLOGY_3D, hall.getCinemaId(), true)
-        );
-    }
-
-    private static Stream<Arguments> provideArgumentsForFindByCinemaIdTest() {
-        return Stream.of(
-                Arguments.of("1", 2, new int[]{0, 1}),
-                Arguments.of("2", 1, new int[]{2}),
-                Arguments.of("3", 1, new int[]{3}),
-                Arguments.of("4", 0, new int[]{})
-        );
-    }
-
-    private static Stream<Arguments> provideArgumentsForFindByCinemaIdAndTechnologyTest() {
-        return Stream.of(
-                Arguments.of("1", Technology.TECHNOLOGY_2D, 1, new int[]{0}),
-                Arguments.of("1", Technology.TECHNOLOGY_3D, 1, new int[]{1}),
-                Arguments.of("2", Technology.TECHNOLOGY_2D, 0, new int[]{}),
-                Arguments.of("2", Technology.TECHNOLOGY_3D, 1, new int[]{2})
-        );
-    }
-
-    private static Stream<Arguments> provideArgumentsForFindByCinemaIdAndTechnologyInTest() {
-        List<Technology> technologies3D = List.of(Technology.TECHNOLOGY_3D);
-        List<Technology> technologies2D3D = List.of(Technology.TECHNOLOGY_2D, Technology.TECHNOLOGY_3D);
-        List<Technology> technologies4D = List.of(Technology.TECHNOLOGY_4D);
-        List<Technology> technologies2D3D4D = List.of(Technology.TECHNOLOGY_2D, Technology.TECHNOLOGY_3D, Technology.TECHNOLOGY_4D);
-
-        return Stream.of(
-                Arguments.of("1", technologies3D, 1, new int[]{1}),
-                Arguments.of("1", technologies2D3D, 2, new int[]{0, 1}),
-                Arguments.of("1", technologies4D, 0, new int[]{}),
-                Arguments.of("1", technologies2D3D4D, 2, new int[]{0, 1})
-        );
-    }
-
     private Hall initHall() {
         return Hall.builder()
                 .number(1)
@@ -302,6 +259,94 @@ class HallRepositoryTest {
         Hall hall4 = new Hall(null, 1, 1, 1, Technology.TECHNOLOGY_3D, "3");
 
         return new Hall[]{hall1, hall2, hall3, hall4};
+    }
+
+    /**
+     * Provides arguments for testing create and update methods in {@link HallRepository}.
+     * The arguments are:
+     * <ul>
+     *     <li>number - the number of the hall</li>
+     *     <li>rows - the number of rows in the hall</li>
+     *     <li>columns - the number of columns in the hall</li>
+     *     <li>technology - the type of technology used in the hall</li>
+     *     <li>cinemaId - the ID of the cinema that the hall belongs to</li>
+     *     <li>shouldThrowException - whether an exception should be thrown due to duplicate name and surname</li>
+     * </ul>
+     */
+    private static Stream<Arguments> provideArgumentsForCreateAndUpdateTests() {
+        return Stream.of(
+                Arguments.of(1, 1, 1, Technology.TECHNOLOGY_3D, "Unique", false),
+                Arguments.of(hall.getNumber(), 1, 1, Technology.TECHNOLOGY_3D, "Unique", false),
+                Arguments.of(100, 2, 2, Technology.TECHNOLOGY_3D, hall.getCinemaId(), false),
+                Arguments.of(hall.getNumber(), 1, 1, Technology.TECHNOLOGY_3D, hall.getCinemaId(), true)
+        );
+    }
+
+    /**
+     * Provides arguments for testing the testFindByCinemaId method in {@link HallRepository}.
+     * The arguments are:
+     * <ul>
+     *     <li>cinemaId - the ID of the cinema whose halls are to be retrieved</li>
+     *     <li>expectedSize - the expected number of halls matching the cinema ID</li>
+     *     <li>expectedHallIndexes - the indexes of expected halls in the test data</li>
+     * </ul>
+     *
+     * @return a stream of arguments for parameterized tests
+     */
+    private static Stream<Arguments> provideArgumentsForFindByCinemaIdTest() {
+        return Stream.of(
+                Arguments.of("1", 2, new int[]{0, 1}),
+                Arguments.of("2", 1, new int[]{2}),
+                Arguments.of("3", 1, new int[]{3}),
+                Arguments.of("4", 0, new int[]{})
+        );
+    }
+
+    /**
+     * Provides arguments for testing the testFindByCinemaIdAndTechnology method in {@link HallRepository}.
+     * The arguments are:
+     * <ul>
+     *     <li>cinemaId - the ID of the cinema whose halls are to be retrieved</li>
+     *     <li>technology - the type of technology to search for</li>
+     *     <li>expectedSize - the expected number of halls matching the cinema ID and technology</li>
+     *     <li>expectedHallIndexes - the indexes of expected halls in the test data</li>
+     * </ul>
+     *
+     * @return a stream of arguments for parameterized tests
+     */
+    private static Stream<Arguments> provideArgumentsForFindByCinemaIdAndTechnologyTest() {
+        return Stream.of(
+                Arguments.of("1", Technology.TECHNOLOGY_2D, 1, new int[]{0}),
+                Arguments.of("1", Technology.TECHNOLOGY_3D, 1, new int[]{1}),
+                Arguments.of("2", Technology.TECHNOLOGY_2D, 0, new int[]{}),
+                Arguments.of("2", Technology.TECHNOLOGY_3D, 1, new int[]{2})
+        );
+    }
+
+    /**
+     * Provides arguments for testing the testFindByCinemaIdAndTechnologyIn method in {@link HallRepository}.
+     * The arguments are:
+     * <ul>
+     *     <li>cinemaId - the ID of the cinema whose halls are to be retrieved</li>
+     *     <li>technologies - the list of technologies to search for</li>
+     *     <li>expectedSize - the expected number of halls matching the cinema ID and technology in</li>
+     *     <li>expectedHallIndexes - the indexes of expected halls in the test data</li>
+     * </ul>
+     *
+     * @return a stream of arguments for parameterized tests
+     */
+    private static Stream<Arguments> provideArgumentsForFindByCinemaIdAndTechnologyInTest() {
+        List<Technology> technologies3D = List.of(Technology.TECHNOLOGY_3D);
+        List<Technology> technologies2D3D = List.of(Technology.TECHNOLOGY_2D, Technology.TECHNOLOGY_3D);
+        List<Technology> technologies4D = List.of(Technology.TECHNOLOGY_4D);
+        List<Technology> technologies2D3D4D = List.of(Technology.TECHNOLOGY_2D, Technology.TECHNOLOGY_3D, Technology.TECHNOLOGY_4D);
+
+        return Stream.of(
+                Arguments.of("1", technologies3D, 1, new int[]{1}),
+                Arguments.of("1", technologies2D3D, 2, new int[]{0, 1}),
+                Arguments.of("1", technologies4D, 0, new int[]{}),
+                Arguments.of("1", technologies2D3D4D, 2, new int[]{0, 1})
+        );
     }
 
 }

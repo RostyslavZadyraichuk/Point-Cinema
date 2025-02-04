@@ -12,6 +12,7 @@ import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.data.mongo.DataMongoTest;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.test.context.ActiveProfiles;
 
@@ -19,10 +20,12 @@ import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
+
 //TODO make fail messages formatted for better clarity
 @DisplayName("Comment repository tests")
 @DataMongoTest
@@ -88,10 +91,7 @@ class CommentRepositoryTest {
         assertNotNull(foundComments, "The found list should not be null");
         assertFalse(foundComments.isEmpty(), "The found list should not be empty");
         assertEquals(expectedSize, foundComments.size(), "The size of the list should match the number of comments saved");
-
-        for (Comment c : comments) {
-            assertTrue(foundComments.contains(c), "The found comments should contain all saved comments");
-        }
+        assertTrue(foundComments.containsAll(Arrays.asList(comments)), "The found comments should contain all saved comments");
     }
 
     @Test
@@ -124,9 +124,8 @@ class CommentRepositoryTest {
 
         assertNotNull(savedComments, "The saved comments list should not be null");
         assertEquals(comments.length, savedComments.size(), "The size of the saved comments should match the input list size");
-        for (Comment c : savedComments) {
-            assertNotNull(c.getId(), "Each saved comment should have a generated ID");
-        }
+        Stream<String> commentIds = savedComments.stream().map(Comment::getId);
+        assertTrue(commentIds.allMatch(Objects::nonNull), "Each saved comment should have a generated ID");
 
         List<Comment> foundComments = commentRepository.findAll();
         int expectedSize = comments.length + 1;
@@ -160,11 +159,12 @@ class CommentRepositoryTest {
         Comment[] comments = getCommentsForSpecializedTests();
         commentRepository.saveAll(Arrays.asList(comments));
 
-        List<Comment> foundComments = commentRepository.findByUserId(userId);
+        Pageable pageable = PageRequest.of(0, 10);
+        Page<Comment> foundComments = commentRepository.findByUserId(userId, pageable);
         assertFalse(foundComments.isEmpty(), "The comments should exist before deleting");
 
         commentRepository.deleteByUserId(userId);
-        foundComments = commentRepository.findByUserId(userId);
+        foundComments = commentRepository.findByUserId(userId, pageable);
         assertTrue(foundComments.isEmpty(), "The comments should not exist after deleting");
     }
 
@@ -175,11 +175,12 @@ class CommentRepositoryTest {
         Comment[] comments = getCommentsForSpecializedTests();
         commentRepository.saveAll(Arrays.asList(comments));
 
-        List<Comment> foundComments = commentRepository.findByMovieId(movieId);
+        Pageable pageable = PageRequest.of(0, 10);
+        Page<Comment> foundComments = commentRepository.findByMovieId(movieId, pageable);
         assertFalse(foundComments.isEmpty(), "The comments should exist before deleting");
 
         commentRepository.deleteByMovieId(movieId);
-        foundComments = commentRepository.findByMovieId(movieId);
+        foundComments = commentRepository.findByMovieId(movieId, pageable);
         assertTrue(foundComments.isEmpty(), "The comments should not exist after deleting");
     }
 
@@ -208,20 +209,16 @@ class CommentRepositoryTest {
         Comment[] comments = getCommentsForSpecializedTests();
         commentRepository.saveAll(Arrays.asList(comments));
 
-        List<Comment> foundComments = commentRepository.findByMovieId(movieId);
-        Page<Comment> foundCommentsPage = commentRepository.findByMovieId(movieId, Pageable.ofSize(10).first());
+        Pageable pageable = PageRequest.of(0, 10);
+        Page<Comment> foundComments = commentRepository.findByMovieId(movieId, pageable);
 
         assertNotNull(foundComments, "The result should not be null");
-        assertNotNull(foundCommentsPage, "The result should not be null");
-        assertEquals(expectedSize, foundComments.size(),
+        assertEquals(expectedSize, foundComments.getTotalElements(),
                 String.format("The result should contain %d comments with movieId '%s'", expectedSize, movieId));
-        assertEquals(expectedSize, foundCommentsPage.getTotalElements(),
-                String.format("The result should contain %d comments with movieId '%s'", expectedSize, movieId));
-        assertEquals(1, foundCommentsPage.getTotalPages(), "The result should contain 1 page");
+        assertEquals(1, foundComments.getTotalPages(), "The result should contain 1 page");
 
         for (int i : expectedCommentIndexes) {
-            assertTrue(foundComments.contains(comments[i]), "Comment should be in the result");
-            assertTrue(foundCommentsPage.getContent().contains(comments[i]), "Comment should be in the result");
+            assertTrue(foundComments.getContent().contains(comments[i]), "Comment should be in the result");
         }
     }
 
@@ -234,20 +231,16 @@ class CommentRepositoryTest {
         Comment[] comments = getCommentsForSpecializedTests();
         commentRepository.saveAll(Arrays.asList(comments));
 
-        List<Comment> foundComments = commentRepository.findByUserId(userId);
-        Page<Comment> foundCommentsPage = commentRepository.findByUserId(userId, Pageable.ofSize(10).first());
+        Pageable pageable = PageRequest.of(0, 10);
+        Page<Comment> foundComments = commentRepository.findByUserId(userId, pageable);
 
         assertNotNull(foundComments, "The result should not be null");
-        assertNotNull(foundCommentsPage, "The result should not be null");
-        assertEquals(expectedSize, foundComments.size(),
+        assertEquals(expectedSize, foundComments.getTotalElements(),
                 String.format("The result should contain %d comments with userId '%s'", expectedSize, userId));
-        assertEquals(expectedSize, foundCommentsPage.getTotalElements(),
-                String.format("The result should contain %d comments with userId '%s'", expectedSize, userId));
-        assertEquals(1, foundCommentsPage.getTotalPages(), "The result should contain 1 page");
+        assertEquals(1, foundComments.getTotalPages(), "The result should contain 1 page");
 
         for (int i : expectedCommentIndexes) {
-            assertTrue(foundComments.contains(comments[i]), "Comment should be in the result");
-            assertTrue(foundCommentsPage.getContent().contains(comments[i]), "Comment should be in the result");
+            assertTrue(foundComments.getContent().contains(comments[i]), "Comment should be in the result");
         }
     }
 
@@ -278,6 +271,15 @@ class CommentRepositoryTest {
         return new Comment[]{comment1, comment2, comment3, comment4};
     }
 
+    /**
+     * Provides arguments for testing create and update methods in {@link CommentRepository}.
+     * The arguments are:
+     * <ul>
+     *     <li>movieId - the movieId to search for</li>
+     *     <li>expectedSize - the expected number of comments matching the movieId</li>
+     *     <li>expectedCommentIndexes - the indexes of expected comments in the test data</li>
+     * </ul>
+     */
     private static Stream<Arguments> provideArgumentsForFindByMovieIdTest() {
         return Stream.of(
                 Arguments.of("1", 1, new int[]{0}),
@@ -286,6 +288,15 @@ class CommentRepositoryTest {
         );
     }
 
+    /**
+     * Provides arguments for testing findByUserId method in {@link CommentRepository}.
+     * The arguments are:
+     * <ul>
+     *     <li>userId - the userId to search for</li>
+     *     <li>expectedSize - the expected number of comments matching the userId</li>
+     *     <li>expectedCommentIndexes - the indexes of expected comments in the test data</li>
+     * </ul>
+     */
     private static Stream<Arguments> provideArgumentsForFindByUserIdTest() {
         return Stream.of(
                 Arguments.of("1", 3, new int[]{0, 2, 3}),

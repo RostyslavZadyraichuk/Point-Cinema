@@ -17,7 +17,6 @@ import org.springframework.test.context.ActiveProfiles;
 import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Stream;
 
@@ -95,7 +94,10 @@ class TicketRepositoryTest {
         assertNotNull(foundTickets, "The found list should not be null");
         assertFalse(foundTickets.isEmpty(), "The found list should not be empty");
         assertEquals(expectedLength, foundTickets.size(), "The size of the list should match the number of tickets saved");
-        assertTrue(foundTickets.containsAll(Arrays.asList(tickets)), "The found tickets should contain all tickets saved before");
+
+        for (Ticket a : tickets) {
+            assertTrue(foundTickets.contains(a), "The found tickets should contain all tickets saved before");
+        }
     }
 
     @ParameterizedTest
@@ -132,8 +134,9 @@ class TicketRepositoryTest {
 
         assertNotNull(savedTickets, "The saved tickets list should not be null");
         assertEquals(tickets.length, savedTickets.size(), "The size of the saved tickets should match the input list size");
-        Stream<String> ticketIds = savedTickets.stream().map(Ticket::getId);
-        assertTrue(ticketIds.allMatch(Objects::nonNull), "Each saved ticket should have a generated ID");
+        for (Ticket a : savedTickets) {
+            assertNotNull(a.getId(), "Each saved ticket should have a generated ID");
+        }
 
         List<Ticket> foundTickets = ticketRepository.findAll();
         int expectedSize = tickets.length + 1;
@@ -190,8 +193,8 @@ class TicketRepositoryTest {
         assertNotNull(foundTickets, "The result should not be null");
         assertEquals(expectedSize, foundTickets.size(),
                 String.format("The result should contain %d tickets with date '%s' and seanceId '%s'", expectedSize, date, seanceId));
-        for (int i : expectedTicketIndexes) {
-            assertTrue(foundTickets.contains(tickets[i]), "Ticket should be in the result");
+        for (int index : expectedTicketIndexes) {
+            assertTrue(foundTickets.contains(tickets[index]), "Ticket should be in the result");
         }
     }
 
@@ -209,8 +212,8 @@ class TicketRepositoryTest {
         assertNotNull(foundTickets, "The result should not be null");
         assertEquals(expectedSize, foundTickets.size(),
                 String.format("The result should contain %d tickets with userId '%s'", expectedSize, userId));
-        for (int i : expectedTicketIndexes) {
-            assertTrue(foundTickets.contains(tickets[i]), "Ticket should be in the result");
+        for (int index : expectedTicketIndexes) {
+            assertTrue(foundTickets.contains(tickets[index]), "Ticket should be in the result");
         }
     }
 
@@ -229,42 +232,9 @@ class TicketRepositoryTest {
         assertNotNull(foundSeances, "The result should not be null");
         assertEquals(expectedRemovedSize, tickets.length - foundSeances.size() + 1,
                 String.format("The result should contain %d tickets with date before '%s'", expectedRemovedSize, date));
-        for (int i : expectedRemovedTicketIndexes) {
-            assertFalse(foundSeances.contains(tickets[i]), "Ticket should not be in the result");
+        for (int index : expectedRemovedTicketIndexes) {
+            assertFalse(foundSeances.contains(tickets[index]), "Ticket should not be in the result");
         }
-    }
-
-    private Ticket initTicket() {
-        return Ticket.builder()
-                .date(LocalDate.of(1, 1, 1))
-                .placeRow(0)
-                .placeSeat(0)
-                .seanceId("test")
-                .userId("test")
-                .paymentStatus(true)
-                .build();
-    }
-
-    private Ticket[] getTicketsForGeneralCrudTests() {
-        Ticket unique1 = new Ticket(null, LocalDate.now(), 100, 100, "Unique",
-                "Unique", false);
-        Ticket unique2 = new Ticket(null, LocalDate.now(), ticket.getPlaceRow(), 100, "Unique",
-                "Unique", false);
-        Ticket unique3 = new Ticket(null, LocalDate.now(), 100, ticket.getPlaceSeat(), "Unique",
-                "Unique", false);
-
-        return new Ticket[]{unique1, unique2, unique3};
-    }
-
-    private Ticket[] getTicketsForSpecializedTests() {
-        Ticket ticket1 = new Ticket(null, LocalDate.of(1, 1, 1),
-                1, 1, "1", "1", false);
-        Ticket ticket2 = new Ticket(null, LocalDate.of(1, 1, 1),
-                2, 2, "2", "1", false);
-        Ticket ticket3 = new Ticket(null, LocalDate.of(2, 2, 2),
-                3, 3, "2", "2", false);
-
-        return new Ticket[]{ticket1, ticket2, ticket3};
     }
 
     /**
@@ -296,18 +266,18 @@ class TicketRepositoryTest {
         );
     }
 
-    /**
-     * Provides arguments for testing the testFindByDateAndSeanceId method in {@link TicketRepository}.
-     * The arguments are:
-     * <ul>
-     *     <li>date - the date to search for tickets by</li>
-     *     <li>seanceId - the identifier of the seance to search for tickets by</li>
-     *     <li>expectedSize - the expected number of tickets with the specified date and seanceId</li>
-     *     <li>expectedTicketIndexes - the indexes of expected tickets in the test data</li>
-     * </ul>
-     *
-     * @return a stream of arguments for parameterized tests
-     */
+/**
+ * Provides arguments for testing the testFindByDateAndSeanceId method in {@link TicketRepository}.
+ * The arguments are:
+ * <ul>
+ *     <li>date - the date to search for tickets by</li>
+ *     <li>seanceId - the identifier of the seance to search for tickets by</li>
+ *     <li>expectedSize - the expected number of tickets with the specified date and seanceId</li>
+ *     <li>expectedTicketIndexes - the indexes of expected tickets in the test data</li>
+ * </ul>
+ *
+ * @return a stream of arguments for parameterized tests
+ */
     private static Stream<Arguments> provideArgumentsForFindByDateAndSeanceIdTest() {
         return Stream.of(
                 Arguments.of(LocalDate.of(1, 1, 1), "1", 1, new int[]{0}),
@@ -355,6 +325,39 @@ class TicketRepositoryTest {
                 Arguments.of(LocalDate.of(2, 2, 2), 3, new int[]{0, 1}),
                 Arguments.of(LocalDate.of(3, 3, 3), 4, new int[]{0, 1, 2})
         );
+    }
+
+    private Ticket initTicket() {
+        return Ticket.builder()
+                .date(LocalDate.of(1, 1, 1))
+                .placeRow(0)
+                .placeSeat(0)
+                .seanceId("test")
+                .userId("test")
+                .paymentStatus(true)
+                .build();
+    }
+
+    private Ticket[] getTicketsForGeneralCrudTests() {
+        Ticket unique1 = new Ticket(null, LocalDate.now(), 100, 100, "Unique",
+                "Unique", false);
+        Ticket unique2 = new Ticket(null, LocalDate.now(), ticket.getPlaceRow(), 100, "Unique",
+                "Unique", false);
+        Ticket unique3 = new Ticket(null, LocalDate.now(), 100, ticket.getPlaceSeat(), "Unique",
+                "Unique", false);
+
+        return new Ticket[]{unique1, unique2, unique3};
+    }
+
+    private Ticket[] getTicketsForSpecializedTests() {
+        Ticket ticket1 = new Ticket(null, LocalDate.of(1, 1, 1),
+                1, 1, "1", "1", false);
+        Ticket ticket2 = new Ticket(null, LocalDate.of(1, 1, 1),
+                2, 2, "2", "1", false);
+        Ticket ticket3 = new Ticket(null, LocalDate.of(2, 2, 2),
+                3, 3, "2", "2", false);
+
+        return new Ticket[]{ticket1, ticket2, ticket3};
     }
 
 }

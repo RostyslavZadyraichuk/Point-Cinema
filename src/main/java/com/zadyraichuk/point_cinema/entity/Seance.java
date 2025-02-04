@@ -8,7 +8,7 @@ import org.springframework.data.mongodb.core.mapping.Field;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
-import java.util.List;
+import java.util.Set;
 
 /**
  * Represents a movie seance (screening) with details about timing, pricing, and other attributes.
@@ -97,9 +97,9 @@ public class Seance {
     private final Language seanceLanguage = Language.UA;
 
     /**
-     * The list of days on which the seance is scheduled.
+     * The set of days on which the seance is scheduled.
      */
     @Singular("day")
-    private final List<Day> days;
+    private final Set<Day> days;
 
 }

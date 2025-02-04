@@ -14,6 +14,7 @@ import org.springframework.test.context.ActiveProfiles;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Stream;
 
@@ -79,10 +80,7 @@ class CinemaRepositoryTest {
         assertNotNull(foundCinemas, "The found list should not be null");
         assertFalse(foundCinemas.isEmpty(), "The found list should not be empty");
         assertEquals(expectedSize, foundCinemas.size(), "The size of the list should match the number of cinemas saved");
-
-        for (Cinema c : cinemas) {
-            assertTrue(foundCinemas.contains(c), "The found cinemas should contain all saved cinemas");
-        }
+        assertTrue(foundCinemas.containsAll(Arrays.asList(cinemas)), "The found cinemas should contain all saved cinemas");
     }
 
     @Test
@@ -108,9 +106,8 @@ class CinemaRepositoryTest {
 
         assertNotNull(savedCinemas, "The saved cinemas list should not be null");
         assertEquals(cinemas.length, savedCinemas.size(), "The size of the saved cinemas should match the input list size");
-        for (Cinema c : savedCinemas) {
-            assertNotNull(c.getId(), "Each saved cinema should have a generated ID");
-        }
+        Stream<String> cinemaIds = savedCinemas.stream().map(Cinema::getId);
+        assertTrue(cinemaIds.allMatch(Objects::nonNull), "Each saved cinema should have a generated ID");
 
         List<Cinema> foundCinemas = cinemaRepository.findAll();
         int expectedSize = cinemas.length + 1;
@@ -172,27 +169,6 @@ class CinemaRepositoryTest {
         }
     }
 
-    private static Stream<Arguments> provideArgumentsForFindByCountryAndCityTest() {
-        return Stream.of(
-                Arguments.of(Country.UKRAINE, "a", 1, new int[]{2}),
-                Arguments.of(Country.UNITED_KINGDOM, "a", 1, new int[]{1}),
-                Arguments.of(Country.POLAND, "a", 1, new int[]{3}),
-                Arguments.of(Country.UKRAINE, "iv", 2, new int[]{0, 2}),
-                Arguments.of(Country.POLAND, "iv", 0, new int[]{}),
-                Arguments.of(Country.UKRAINE, "Lviv", 1, new int[]{0}),
-                Arguments.of(Country.UKRAINE, "iv", 2, new int[]{0, 2}),
-                Arguments.of(Country.UKRAINE, "Iv", 2, new int[]{0, 2}),
-                Arguments.of(Country.UKRAINE, "iV", 2, new int[]{0, 2}),
-                Arguments.of(Country.UKRAINE, "IV", 2, new int[]{0, 2}),
-                Arguments.of(Country.UKRAINE, "", 3, new int[]{0, 2}),
-                Arguments.of(Country.UNITED_KINGDOM, "", 1, new int[]{1}),
-                Arguments.of(Country.POLAND, "", 1, new int[]{3}),
-                Arguments.of(Country.UKRAINE, "123", 0, new int[]{}),
-                Arguments.of(Country.UNITED_KINGDOM, "123", 0, new int[]{}),
-                Arguments.of(Country.POLAND, "123", 0, new int[]{})
-        );
-    }
-
     private Cinema initCinema() {
         return new Cinema("test", Country.UKRAINE, "test", "test");
     }
@@ -212,6 +188,37 @@ class CinemaRepositoryTest {
         Cinema cinema4 = new Cinema("4", Country.POLAND, "Warsaw", "4");
 
         return new Cinema[]{cinema1, cinema2, cinema3, cinema4};
+    }
+
+    /**
+     * Provides arguments for testing create and update methods in {@link CinemaRepository}.
+     * The arguments are:
+     * <ul>
+     *     <li>country - the country to search for cinemas</li>
+     *     <li>city - the city pattern to search for cinemas</li>
+     *     <li>expectedSize - the expected number of cinemas matching the criteria</li>
+     *     <li>expectedCinemaIndexes - the indexes of expected cinemas in the test data</li>
+     * </ul>
+     */
+    private static Stream<Arguments> provideArgumentsForFindByCountryAndCityTest() {
+        return Stream.of(
+                Arguments.of(Country.UKRAINE, "a", 1, new int[]{2}),
+                Arguments.of(Country.UNITED_KINGDOM, "a", 1, new int[]{1}),
+                Arguments.of(Country.POLAND, "a", 1, new int[]{3}),
+                Arguments.of(Country.UKRAINE, "iv", 2, new int[]{0, 2}),
+                Arguments.of(Country.POLAND, "iv", 0, new int[]{}),
+                Arguments.of(Country.UKRAINE, "Lviv", 1, new int[]{0}),
+                Arguments.of(Country.UKRAINE, "iv", 2, new int[]{0, 2}),
+                Arguments.of(Country.UKRAINE, "Iv", 2, new int[]{0, 2}),
+                Arguments.of(Country.UKRAINE, "iV", 2, new int[]{0, 2}),
+                Arguments.of(Country.UKRAINE, "IV", 2, new int[]{0, 2}),
+                Arguments.of(Country.UKRAINE, "", 3, new int[]{0, 2}),
+                Arguments.of(Country.UNITED_KINGDOM, "", 1, new int[]{1}),
+                Arguments.of(Country.POLAND, "", 1, new int[]{3}),
+                Arguments.of(Country.UKRAINE, "123", 0, new int[]{}),
+                Arguments.of(Country.UNITED_KINGDOM, "123", 0, new int[]{}),
+                Arguments.of(Country.POLAND, "123", 0, new int[]{})
+        );
     }
 
 }

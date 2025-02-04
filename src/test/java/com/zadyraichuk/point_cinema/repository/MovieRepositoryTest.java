@@ -22,6 +22,7 @@ import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -56,7 +57,7 @@ class MovieRepositoryTest {
                     boolean shouldThrowException) {
         Movie movieLocal = new Movie(null, name, surname, "", "", 0,
                 LocalDate.now(), 0.0, MPAA.G, 0.0, "", "", "",
-                List.of(), List.of(), List.of());
+                List.of(), Set.of(), Set.of());
         assertNull(movieLocal.getId(), "The movie has just created should have no ID");
 
         if (shouldThrowException) {
@@ -139,11 +140,11 @@ class MovieRepositoryTest {
                     boolean shouldThrowException) {
         Movie movieBeforeUpdate = new Movie(null, "updatable", "updatable", "", "", 0,
                 LocalDate.now(), 0.0, MPAA.G, 0.0, "", "", "",
-                List.of(), List.of(), List.of());
+                List.of(), Set.of(), Set.of());
         movieBeforeUpdate = movieRepository.save(movieBeforeUpdate);
         Movie updatedMovie = new Movie(movieBeforeUpdate.getId(), name, surname, "", "", 0,
                 LocalDate.now(), 0.0, MPAA.G, 0.0, "", "", "",
-                List.of(), List.of(), List.of());
+                List.of(), Set.of(), Set.of());
 
         if (shouldThrowException) {
             assertThrows(DuplicateKeyException.class, () -> movieRepository.save(updatedMovie),
@@ -226,7 +227,7 @@ class MovieRepositoryTest {
     }
 
     @ParameterizedTest
-    @MethodSource("provideArgumentsForFindByName")
+    @MethodSource("provideArgumentsForFindByNameTest")
     @DisplayName("Test finding all Movies by name")
     void testFindByName(String name,
                         int expectedSize,
@@ -245,7 +246,7 @@ class MovieRepositoryTest {
     }
 
     @ParameterizedTest
-    @MethodSource("provideArgumentsForFindByGenresContains")
+    @MethodSource("provideArgumentsForFindByGenresContainsTest")
     @DisplayName("Test finding all Movies by genres")
     void testFindByGenresContains(List<Genre> genres,
                                   int expectedSize,
@@ -264,7 +265,7 @@ class MovieRepositoryTest {
     }
 
     @ParameterizedTest
-    @MethodSource("provideArgumentsForFindByReleaseDateGreaterThanEqual")
+    @MethodSource("provideArgumentsForFindByReleaseDateGreaterThanEqualTest")
     @DisplayName("Test finding all Movies by release date after")
     void testFindByReleaseDateGreaterThanEqual(LocalDate releaseDate,
                                                int expectedSize,
@@ -283,7 +284,7 @@ class MovieRepositoryTest {
     }
 
     @ParameterizedTest
-    @MethodSource("provideArgumentsForFindByReleaseDateLessThanEqual")
+    @MethodSource("provideArgumentsForFindByReleaseDateLessThanEqualTest")
     @DisplayName("Test finding all Movies by release date before")
     void testFindByReleaseDateLessThanEqual(LocalDate releaseDate,
                                             int expectedSize,
@@ -302,7 +303,7 @@ class MovieRepositoryTest {
     }
 
     @ParameterizedTest
-    @MethodSource("provideArgumentsForFindByReleaseDateBetween")
+    @MethodSource("provideArgumentsForFindByReleaseDateBetweenTest")
     @DisplayName("Test finding all Movies by release date between")
     void testFindByReleaseDateBetween(LocalDate from,
                                       LocalDate to,
@@ -322,7 +323,7 @@ class MovieRepositoryTest {
     }
 
     @ParameterizedTest
-    @MethodSource("provideArgumentsForFindByGenresContainsAndReleaseDateGreaterThanEqual")
+    @MethodSource("provideArgumentsForFindByGenresContainsAndReleaseDateGreaterThanEqualTest")
     @DisplayName("Test finding all Movies by genres and release date after")
     void testFindByGenresContainsAndReleaseDateGreaterThanEqual(List<Genre> genres,
                                                                 LocalDate releaseDate,
@@ -342,7 +343,7 @@ class MovieRepositoryTest {
     }
 
     @ParameterizedTest
-    @MethodSource("provideArgumentsForFindByGenresContainsAndReleaseDateLessThanEqual")
+    @MethodSource("provideArgumentsForFindByGenresContainsAndReleaseDateLessThanEqualTest")
     @DisplayName("Test finding all Movies by genres and release date before")
     void testFindByGenresContainsAndReleaseDateLessThanEqual(List<Genre> genres,
                                                              LocalDate releaseDate,
@@ -362,7 +363,7 @@ class MovieRepositoryTest {
     }
 
     @ParameterizedTest
-    @MethodSource("provideArgumentsForFindByGenresContainsAndReleaseDateBetween")
+    @MethodSource("provideArgumentsForFindByGenresContainsAndReleaseDateBetweenTest")
     @DisplayName("Test finding all Movies by genres and release date between")
     void testFindByGenresContainsAndReleaseDateBetween(List<Genre> genres,
                                                        LocalDate from,
@@ -383,7 +384,7 @@ class MovieRepositoryTest {
     }
 
     @ParameterizedTest
-    @MethodSource("provideArgumentsForFindByActorIdsContains")
+    @MethodSource("provideArgumentsForFindByActorIdsContainsTest")
     @DisplayName("Test finding all Movies by actor ids contains")
     void testFindByActorIdsContains(String actorId,
                                     int expectedSize,
@@ -401,7 +402,56 @@ class MovieRepositoryTest {
         }
     }
 
-    //TODO add similar docs for another provide methods in different tests
+    private Movie initMovie() {
+        return Movie.builder()
+                .name("test")
+                .surname("test")
+                .description("test")
+                .directedBy("test")
+                .duration(1)
+                .releaseDate(LocalDate.now())
+                .usersRating(1.0)
+                .mpaaRating(MPAA.G)
+                .imdbRating(1.0)
+                .movieCountry("test")
+                .widePictureId("test")
+                .posterPictureId("test")
+                .galleryPictureIds(List.of("test"))
+                .actorIds(List.of("test"))
+                .genres(List.of(Genre.ACTION))
+                .build();
+    }
+
+    private Movie[] getMoviesForGeneralCrudTests() {
+        Movie unique1 = new Movie(null, "unique1", "unique1", "", "", 0,
+                LocalDate.now(), 0.0, MPAA.G, 0.0, "", "", "",
+                List.of(), Set.of(), Set.of());
+        Movie unique2 = new Movie(null, "unique2", "unique2", "", "", 0,
+                LocalDate.now(), 0.0, MPAA.G, 0.0, "", "", "",
+                List.of(), Set.of(), Set.of());
+        Movie unique3 = new Movie(null, "unique3", "unique3", "", "", 0,
+                LocalDate.now(), 0.0, MPAA.G, 0.0, "", "", "",
+                List.of(), Set.of(), Set.of());
+
+        return new Movie[]{unique1, unique2, unique3};
+    }
+
+    private Movie[] getMoviesForSpecializedTests() {
+        Movie movie1 = new Movie(null, "unique1", "unique4", "", "", 0,
+                LocalDate.of(1, 1, 1), 0.0, MPAA.G, 0.0, "",
+                "", "", List.of(), Set.of("1", "2", "3"), Set.of(Genre.ACTION, Genre.DRAMA));
+        Movie movie2 = new Movie(null, "unique2", "unique3", "", "", 0,
+                LocalDate.of(1, 1, 2), 0.0, MPAA.G, 0.0, "",
+                "", "", List.of(), Set.of("1"), Set.of(Genre.DETECTIVE, Genre.DRAMA));
+        Movie movie3 = new Movie(null, "unique3", "unique2", "", "", 0,
+                LocalDate.of(1, 1, 3), 0.0, MPAA.G, 0.0, "",
+                "", "", List.of(), Set.of("3", "4"), Set.of(Genre.CARTOON, Genre.COMEDY));
+        Movie movie4 = new Movie(null, "unique4", "unique1", "", "", 0,
+                LocalDate.of(1, 1, 4), 0.0, MPAA.G, 0.0, "",
+                "", "", List.of(), Set.of("4", "5", "1"), Set.of(Genre.DRAMA));
+
+        return new Movie[]{movie1, movie2, movie3, movie4};
+    }
 
     /**
      * Provides arguments for testing create and update methods in {@link MovieRepository}.
@@ -432,7 +482,7 @@ class MovieRepositoryTest {
      *
      * @return a stream of arguments for parameterized tests
      */
-    private static Stream<Arguments> provideArgumentsForFindByName() {
+    private static Stream<Arguments> provideArgumentsForFindByNameTest() {
         return Stream.of(
                 Arguments.of("u", 4, new int[]{0, 1, 2, 3}),
                 Arguments.of("UNIQUE", 4, new int[]{0, 1, 2, 3}),
@@ -452,7 +502,7 @@ class MovieRepositoryTest {
      *
      * @return a stream of arguments for parameterized tests
      */
-    private static Stream<Arguments> provideArgumentsForFindByGenresContains() {
+    private static Stream<Arguments> provideArgumentsForFindByGenresContainsTest() {
         return Stream.of(
                 Arguments.of(List.of(Genre.DOCUMENTARY), 0, new int[]{}),
                 Arguments.of(List.of(Genre.DRAMA), 3, new int[]{0, 1, 3}),
@@ -472,7 +522,7 @@ class MovieRepositoryTest {
      *
      * @return a stream of arguments for parameterized tests
      */
-    private static Stream<Arguments> provideArgumentsForFindByReleaseDateGreaterThanEqual() {
+    private static Stream<Arguments> provideArgumentsForFindByReleaseDateGreaterThanEqualTest() {
         return Stream.of(
                 Arguments.of(LocalDate.of(1, 1, 1), 5, new int[]{1, 2, 3}),
                 Arguments.of(LocalDate.of(1, 1, 4), 2, new int[]{})
@@ -490,7 +540,7 @@ class MovieRepositoryTest {
      *
      * @return a stream of arguments for parameterized tests
      */
-    private static Stream<Arguments> provideArgumentsForFindByReleaseDateLessThanEqual() {
+    private static Stream<Arguments> provideArgumentsForFindByReleaseDateLessThanEqualTest() {
         return Stream.of(
                 Arguments.of(LocalDate.of(1, 1, 1), 1, new int[]{}),
                 Arguments.of(LocalDate.of(1, 1, 4), 4, new int[]{0, 1, 2}),
@@ -510,7 +560,7 @@ class MovieRepositoryTest {
      *
      * @return a stream of arguments for parameterized tests
      */
-    private static Stream<Arguments> provideArgumentsForFindByReleaseDateBetween() {
+    private static Stream<Arguments> provideArgumentsForFindByReleaseDateBetweenTest() {
         return Stream.of(
                 Arguments.of(LocalDate.of(1, 1, 1),
                         LocalDate.of(1, 1, 1), 1, new int[]{0}),
@@ -533,7 +583,7 @@ class MovieRepositoryTest {
      *
      * @return a stream of arguments for parameterized tests
      */
-    private static Stream<Arguments> provideArgumentsForFindByGenresContainsAndReleaseDateGreaterThanEqual() {
+    private static Stream<Arguments> provideArgumentsForFindByGenresContainsAndReleaseDateGreaterThanEqualTest() {
         return Stream.of(
                 Arguments.of(List.of(Genre.ACTION), LocalDate.of(1, 1, 1), 2, new int[]{0}),
                 Arguments.of(List.of(Genre.ACTION, Genre.THRILLER), LocalDate.of(1, 1, 1), 0, new int[]{}),
@@ -556,7 +606,7 @@ class MovieRepositoryTest {
      *
      * @return a stream of arguments for parameterized tests
      */
-    private static Stream<Arguments> provideArgumentsForFindByGenresContainsAndReleaseDateLessThanEqual() {
+    private static Stream<Arguments> provideArgumentsForFindByGenresContainsAndReleaseDateLessThanEqualTest() {
         return Stream.of(
                 Arguments.of(List.of(Genre.ACTION), LocalDate.of(1, 1, 1), 1, new int[]{0}),
                 Arguments.of(List.of(Genre.COMEDY, Genre.DRAMA), LocalDate.of(1, 1, 2), 0, new int[]{}),
@@ -579,7 +629,7 @@ class MovieRepositoryTest {
      *
      * @return a stream of arguments for parameterized tests
      */
-    private static Stream<Arguments> provideArgumentsForFindByGenresContainsAndReleaseDateBetween() {
+    private static Stream<Arguments> provideArgumentsForFindByGenresContainsAndReleaseDateBetweenTest() {
         return Stream.of(
                 Arguments.of(List.of(Genre.ACTION), LocalDate.of(1, 1, 1),
                         LocalDate.of(1, 1, 1), 1, new int[]{0}),
@@ -601,64 +651,13 @@ class MovieRepositoryTest {
      *
      * @return a stream of arguments for parameterized tests
      */
-    private static Stream<Arguments> provideArgumentsForFindByActorIdsContains() {
+    private static Stream<Arguments> provideArgumentsForFindByActorIdsContainsTest() {
         return Stream.of(
                 Arguments.of("0", 0, new int[]{}),
                 Arguments.of("1", 3, new int[]{0, 1, 3}),
                 Arguments.of("2", 1, new int[]{0}),
                 Arguments.of("3", 2, new int[]{0, 2})
         );
-    }
-
-    private Movie initMovie() {
-        return Movie.builder()
-                .name("test")
-                .surname("test")
-                .description("test")
-                .directedBy("test")
-                .duration(1)
-                .releaseDate(LocalDate.now())
-                .usersRating(1.0)
-                .mpaaRating(MPAA.G)
-                .imdbRating(1.0)
-                .movieCountry("test")
-                .widePictureId("test")
-                .posterPictureId("test")
-                .galleryPictureIds(List.of("test"))
-                .actorIds(List.of("test"))
-                .genres(List.of(Genre.ACTION))
-                .build();
-    }
-
-    private Movie[] getMoviesForGeneralCrudTests() {
-        Movie unique1 = new Movie(null, "unique1", "unique1", "", "", 0,
-                LocalDate.now(), 0.0, MPAA.G, 0.0, "", "", "",
-                List.of(), List.of(), List.of());
-        Movie unique2 = new Movie(null, "unique2", "unique2", "", "", 0,
-                LocalDate.now(), 0.0, MPAA.G, 0.0, "", "", "",
-                List.of(), List.of(), List.of());
-        Movie unique3 = new Movie(null, "unique3", "unique3", "", "", 0,
-                LocalDate.now(), 0.0, MPAA.G, 0.0, "", "", "",
-                List.of(), List.of(), List.of());
-
-        return new Movie[]{unique1, unique2, unique3};
-    }
-
-    private Movie[] getMoviesForSpecializedTests() {
-        Movie movie1 = new Movie(null, "unique1", "unique4", "", "", 0,
-                LocalDate.of(1, 1, 1), 0.0, MPAA.G, 0.0, "",
-                "", "", List.of(), List.of("1", "2", "3"), List.of(Genre.ACTION, Genre.DRAMA));
-        Movie movie2 = new Movie(null, "unique2", "unique3", "", "", 0,
-                LocalDate.of(1, 1, 2), 0.0, MPAA.G, 0.0, "",
-                "", "", List.of(), List.of("1"), List.of(Genre.DETECTIVE, Genre.DRAMA));
-        Movie movie3 = new Movie(null, "unique3", "unique2", "", "", 0,
-                LocalDate.of(1, 1, 3), 0.0, MPAA.G, 0.0, "",
-                "", "", List.of(), List.of("3", "4"), List.of(Genre.CARTOON, Genre.COMEDY));
-        Movie movie4 = new Movie(null, "unique4", "unique1", "", "", 0,
-                LocalDate.of(1, 1, 4), 0.0, MPAA.G, 0.0, "",
-                "", "", List.of(), List.of("4", "5", "1"), List.of(Genre.DRAMA));
-
-        return new Movie[]{movie1, movie2, movie3, movie4};
     }
 
 }

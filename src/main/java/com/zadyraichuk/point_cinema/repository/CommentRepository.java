@@ -19,14 +19,6 @@ import java.util.List;
 public interface CommentRepository extends MongoRepository<Comment, String> {
 
     /**
-     * Retrieves a list of comments associated with a specific movie.
-     *
-     * @param id the unique identifier of the movie
-     * @return a list of comments related to the specified movie
-     */
-    List<Comment> findByMovieId(String id);
-
-    /**
      * Retrieves a paginated list of comments associated with a specific movie.
      *
      * @param id the unique identifier of the movie
@@ -34,14 +26,6 @@ public interface CommentRepository extends MongoRepository<Comment, String> {
      * @return a paginated list of comments related to the specified movie
      */
     Page<Comment> findByMovieId(String id, Pageable pageable);
-
-    /**
-     * Retrieves a list of comments associated with a specific user.
-     *
-     * @param id the unique identifier of the user
-     * @return a list of comments related to the specified user
-     */
-    List<Comment> findByUserId(String id);
 
     /**
      * Retrieves a paginated list of comments associated with a specific user.

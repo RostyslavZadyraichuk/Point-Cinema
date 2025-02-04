@@ -16,6 +16,7 @@ import org.springframework.test.context.ActiveProfiles;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Stream;
 
@@ -79,10 +80,7 @@ class PictureRepositoryTest {
         assertNotNull(foundPictures, "The found list should not be null");
         assertFalse(foundPictures.isEmpty(), "The found list should not be empty");
         assertEquals(expectedLength, foundPictures.size(), "The size of the list should match the number of pictures saved");
-
-        for (Picture a : pictures) {
-            assertTrue(foundPictures.contains(a), "The found pictures should contain all pictures saved before");
-        }
+        assertTrue(foundPictures.containsAll(Arrays.asList(pictures)), "The found pictures should contain all pictures saved before");
     }
 
     @Test
@@ -108,9 +106,8 @@ class PictureRepositoryTest {
 
         assertNotNull(savedPictures, "The saved pictures list should not be null");
         assertEquals(pictures.length, savedPictures.size(), "The size of the saved pictures should match the input list size");
-        for (Picture a : savedPictures) {
-            assertNotNull(a.getId(), "Each saved picture should have a generated ID");
-        }
+        Stream<String> pictureIds = savedPictures.stream().map(Picture::getId);
+        assertTrue(pictureIds.allMatch(Objects::nonNull), "Each saved picture should have a generated ID");
 
         List<Picture> foundPictures = pictureRepository.findAll();
         int expectedSize = pictures.length + 1;

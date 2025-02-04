@@ -29,7 +29,6 @@ import java.util.*;
  *
  * @author Rostyslav Zadyraichuk
  */
-//TODO check collection type in each entity
 @Document(collection = "movie")
 @AllArgsConstructor
 @Getter
@@ -125,18 +124,18 @@ public class Movie {
     private final List<String> galleryPictureIds;
 
     /**
-     * A list of identifiers for actors associated with the movie.
+     * A set of identifiers for actors associated with the movie.
      */
     @Field(name = "actor_ids")
     @Singular("actorId")
     @Indexed
-    private final List<String> actorIds;
+    private final Set<String> actorIds;
 
     /**
-     * A list of genres associated with the movie.
+     * A set of genres associated with the movie.
      */
     @Singular("genre")
     @Indexed
-    private final List<Genre> genres;
+    private final Set<Genre> genres;
 
 }

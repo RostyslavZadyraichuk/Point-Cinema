@@ -5,9 +5,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -28,8 +26,8 @@ class MovieTest {
     private static String widePictureId;
     private static String posterPictureId;
     private static List<String> galleryPictureIds;
-    private static List<String> actorIds;
-    private static List<Genre> genres;
+    private static Set<String> actorIds;
+    private static Set<Genre> genres;
 
     private Movie movie;
 
@@ -49,8 +47,8 @@ class MovieTest {
         MovieTest.widePictureId = "test";
         MovieTest.posterPictureId = "test";
         MovieTest.galleryPictureIds = Collections.emptyList();
-        MovieTest.actorIds = Collections.emptyList();
-        MovieTest.genres = Collections.emptyList();
+        MovieTest.actorIds = Collections.emptySet();
+        MovieTest.genres = Collections.emptySet();
     }
 
     @BeforeEach
@@ -75,8 +73,8 @@ class MovieTest {
         String widePictureIdLocal = "100";
         String posterPictureIdLocal = "100";
         List<String> galleryPictureIdsLocal = new ArrayList<>(0);
-        List<String> actorIdsLocal = new ArrayList<>(0);
-        List<Genre> genresLocal = new ArrayList<>(0);
+        Set<String> actorIdsLocal = new HashSet<>(0);
+        Set<Genre> genresLocal = new HashSet<>(0);
 
         movie = new Movie(
                 idLocal,
@@ -187,8 +185,8 @@ class MovieTest {
             String widePictureIdLocal = "1000";
             String posterPictureIdLocal = "1000";
             List<String> galleryPictureIdsLocal = new ArrayList<>(0);
-            List<String> actorIdsLocal = new ArrayList<>(0);
-            List<Genre> genresLocal = new ArrayList<>(0);
+            Set<String> actorIdsLocal = new HashSet<>(0);
+            Set<Genre> genresLocal = new HashSet<>(0);
 
             movie = Movie.builder()
                     .id(idLocal)
@@ -232,8 +230,8 @@ class MovieTest {
         void testBuilderEmptyCollections() {
             Movie actual = Movie.builder().build();
             List<String> galleryPictureIdsActual = actual.getGalleryPictureIds();
-            List<String> actorIdsActual = actual.getActorIds();
-            List<Genre> genresActual = actual.getGenres();
+            Set<String> actorIdsActual = actual.getActorIds();
+            Set<Genre> genresActual = actual.getGenres();
 
             assertNotNull(galleryPictureIdsActual, "Gallery picture ids should not be null");
             assertTrue(galleryPictureIdsActual.isEmpty(), "Gallery picture ids should be empty");
@@ -247,8 +245,8 @@ class MovieTest {
         @DisplayName("Test @Singular fields handle multiple values correctly")
         void testSingularFields_whenAdd() {
             List<String> galleryPictureIdsExpected = List.of("gallery1", "gallery2");
-            List<String> actorIdsExpected = List.of("actor1", "actor2");
-            List<Genre> genresExpected = List.of(Genre.ADVENTURE, Genre.DETECTIVE);
+            Set<String> actorIdsExpected = Set.of("actor1", "actor2");
+            Set<Genre> genresExpected = Set.of(Genre.ADVENTURE, Genre.DETECTIVE);
 
             Movie actual = Movie.builder()
                     .galleryPictureId("gallery1")

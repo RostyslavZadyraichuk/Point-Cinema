@@ -7,6 +7,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
 
 import java.util.List;
+import java.util.Set;
 
 /**
  * Represents a user entity in the system.
@@ -96,28 +97,28 @@ public class User {
     private final String pictureId;
 
     /**
-     * A list of IDs of the user's favourite movies.
+     * A set of IDs of the user's favourite movies.
      * Stored in the database with the field name "favourite_movie_ids".
      */
     @Field(name = "favourite_movie_ids")
     @Singular("favouriteMovieId")
-    private final List<String> favouriteMovieIds;
+    private final Set<String> favouriteMovieIds;
 
     /**
-     * A list of IDs of movies the user has viewed.
+     * A set of IDs of movies the user has viewed.
      * Stored in the database with the field name "viewed_movie_ids".
      */
     @Field(name = "viewed_movie_ids")
     @Singular("viewedMovieId")
-    private final List<String> viewedMovieIds;
+    private final Set<String> viewedMovieIds;
 
     /**
-     * A list of IDs of movies the user is waiting for.
+     * A set of IDs of movies the user is waiting for.
      * Stored in the database with the field name "wait_movie_ids".
      */
     @Field(name = "wait_movie_ids")
     @Singular("waitMovieId")
-    private final List<String> waitMovieIds;
+    private final Set<String> waitMovieIds;
 
     /**
      * A list of message IDs associated with the user.

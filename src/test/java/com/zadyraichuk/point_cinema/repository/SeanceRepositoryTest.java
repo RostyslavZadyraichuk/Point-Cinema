@@ -19,9 +19,7 @@ import org.springframework.test.context.ActiveProfiles;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -97,10 +95,7 @@ class SeanceRepositoryTest {
         assertNotNull(foundSeances, "The found list should not be null");
         assertFalse(foundSeances.isEmpty(), "The found list should not be empty");
         assertEquals(expectedLength, foundSeances.size(), "The size of the list should match the number of seances saved");
-
-        for (Seance a : seances) {
-            assertTrue(foundSeances.contains(a), "The found seances should contain all seances saved before");
-        }
+        assertTrue(foundSeances.containsAll(List.of(seances)), "The found seances should contain all seances saved before");
     }
 
     @Test
@@ -143,9 +138,8 @@ class SeanceRepositoryTest {
 
         assertNotNull(savedSeances, "The saved seances list should not be null");
         assertEquals(seances.length, savedSeances.size(), "The size of the saved seances should match the input list size");
-        for (Seance a : savedSeances) {
-            assertNotNull(a.getId(), "Each saved seance should have a generated ID");
-        }
+        Stream<String> seanceIds = savedSeances.stream().map(Seance::getId);
+        assertTrue(seanceIds.allMatch(Objects::nonNull), "Each saved seance should have a generated ID");
 
         List<Seance> foundSeances = seanceRepository.findAll();
         int expectedSize = seances.length + 1;
@@ -188,7 +182,7 @@ class SeanceRepositoryTest {
     }
 
     @ParameterizedTest
-    @MethodSource("provideArgumentsForFindByHallId")
+    @MethodSource("provideArgumentsForFindByHallIdTest")
     @DisplayName("Test finding an Seance by Hall Id")
     void testFindByHallId(String hallId,
                           int expectedSize,
@@ -202,13 +196,13 @@ class SeanceRepositoryTest {
         assertNotNull(foundSeances, "The result should not be null");
         assertEquals(expectedSize, foundSeances.getTotalElements(),
                 String.format("The result should contain %d seances with hallId '%s'", expectedSize, hallId));
-        for (int index : expectedSeanceIndexes) {
-            assertTrue(foundSeances.getContent().contains(seances[index]), "Seance should be in the result");
+        for (int i : expectedSeanceIndexes) {
+            assertTrue(foundSeances.getContent().contains(seances[i]), "Seance should be in the result");
         }
     }
 
     @ParameterizedTest
-    @MethodSource("provideArgumentsForFindByMovieId")
+    @MethodSource("provideArgumentsForFindByMovieIdTest")
     @DisplayName("Test finding an Seance by Movie Id")
     void testFindByMovieId(String movieId,
                            int expectedSize,
@@ -222,13 +216,13 @@ class SeanceRepositoryTest {
         assertNotNull(foundSeances, "The result should not be null");
         assertEquals(expectedSize, foundSeances.getTotalElements(),
                 String.format("The result should contain %d seances with movieId '%s'", expectedSize, movieId));
-        for (int index : expectedSeanceIndexes) {
-            assertTrue(foundSeances.getContent().contains(seances[index]), "Seance should be in the result");
+        for (int i : expectedSeanceIndexes) {
+            assertTrue(foundSeances.getContent().contains(seances[i]), "Seance should be in the result");
         }
     }
 
     @ParameterizedTest
-    @MethodSource("provideArgumentsForFindByDateIsInSeanceDatesRange")
+    @MethodSource("provideArgumentsForFindByDateIsInSeanceDatesRangeTest")
     @DisplayName("Test finding an Seance by Date is in Seance dates range")
     void testFindByDateIsInSeanceDatesRange(LocalDate date,
                                             int expectedSize,
@@ -242,13 +236,13 @@ class SeanceRepositoryTest {
         assertNotNull(foundSeances, "The result should not be null");
         assertEquals(expectedSize, foundSeances.getTotalElements(),
                 String.format("The result should contain %d seances with date '%s' in range", expectedSize, date));
-        for (int index : expectedSeanceIndexes) {
-            assertTrue(foundSeances.getContent().contains(seances[index]), "Seance should be in the result");
+        for (int i : expectedSeanceIndexes) {
+            assertTrue(foundSeances.getContent().contains(seances[i]), "Seance should be in the result");
         }
     }
 
     @ParameterizedTest
-    @MethodSource("provideArgumentsForDeleteByDateToBefore")
+    @MethodSource("provideArgumentsForDeleteByDateToBeforeTest")
     @DisplayName("Test deleting Seances by Date To is before")
     void testDeleteByDateToBefore(LocalDate date,
                                   int expectedRemovedSize,
@@ -262,87 +256,9 @@ class SeanceRepositoryTest {
         assertNotNull(foundSeances, "The result should not be null");
         assertEquals(expectedRemovedSize, seances.length - foundSeances.size() + 1,
                 String.format("The result should contain %d seances with dateTo before '%s'", expectedRemovedSize, date));
-        for (int index : expectedRemovedRatingIndexes) {
-            assertFalse(foundSeances.contains(seances[index]), "Seance should not be in the result");
+        for (int i : expectedRemovedRatingIndexes) {
+            assertFalse(foundSeances.contains(seances[i]), "Seance should not be in the result");
         }
-    }
-
-    /**
-     * Provides arguments for testing the testFindByHallId method in {@link SeanceRepository}.
-     * The arguments are:
-     * <ul>
-     *     <li>hallId - string with hall identifier</li>
-     *     <li>expectedSize - the expected number of seances matching the hall identifier</li>
-     *     <li>expectedSeanceIndexes - the indexes of expected seances in the test data</li>
-     * </ul>
-     *
-     * @return a stream of arguments for parameterized tests
-     */
-    private static Stream<Arguments> provideArgumentsForFindByHallId() {
-        return Stream.of(
-                Arguments.of("0", 0, new int[]{}),
-                Arguments.of("1", 1, new int[]{0}),
-                Arguments.of("2", 2, new int[]{1, 2})
-        );
-    }
-
-    /**
-     * Provides arguments for testing the testFindByMovieId method in {@link SeanceRepository}.
-     * The arguments are:
-     * <ul>
-     *     <li>movieId - string with movie identifier</li>
-     *     <li>expectedSize - the expected number of seances matching the movie identifier</li>
-     *     <li>expectedSeanceIndexes - the indexes of expected seances in the test data</li>
-     * </ul>
-     *
-     * @return a stream of arguments for parameterized tests
-     */
-    private static Stream<Arguments> provideArgumentsForFindByMovieId() {
-        return Stream.of(
-                Arguments.of("0", 0, new int[]{}),
-                Arguments.of("1", 2, new int[]{0, 1}),
-                Arguments.of("2", 1, new int[]{2})
-        );
-    }
-
-    /**
-     * Provides arguments for testing the testFindByDateIsInSeanceDatesRange method in {@link SeanceRepository}.
-     * The arguments are:
-     * <ul>
-     *     <li>date - the date in which to search for seances</li>
-     *     <li>expectedSize - the expected number of seances with a date within the specified date</li>
-     *     <li>expectedSeanceIndexes - the indexes of expected seances in the test data</li>
-     * </ul>
-     *
-     * @return a stream of arguments for parameterized tests
-     */
-    private static Stream<Arguments> provideArgumentsForFindByDateIsInSeanceDatesRange() {
-        return Stream.of(
-                Arguments.of(LocalDate.of(2, 2, 2), 1, new int[]{0}),
-                Arguments.of(LocalDate.of(3, 3, 3), 2, new int[]{0, 1}),
-                Arguments.of(LocalDate.of(8, 8, 8), 2, new int[]{0, 3}),
-                Arguments.of(LocalDate.of(11, 11, 11), 2, new int[]{2, 3}),
-                Arguments.of(LocalDate.of(12, 1, 1), 1, new int[]{3}),
-                Arguments.of(LocalDate.of(50, 1, 1), 0, new int[]{})
-        );
-    }
-
-    /**
-     * Provides arguments for testing the testDeleteByDateToBefore method in {@link SeanceRepository}.
-     * The arguments are:
-     * <ul>
-     *     <li>date - the date to delete seances with dateTo before</li>
-     *     <li>expectedRemovedSize - the expected number of removed seances</li>
-     *     <li>expectedRemovedSeanceIndexes - the indexes of expected removed seances in the test data</li>
-     * </ul>
-     *
-     * @return a stream of arguments for parameterized tests
-     */
-    private static Stream<Arguments> provideArgumentsForDeleteByDateToBefore() {
-        return Stream.of(
-                Arguments.of(LocalDate.of(11, 1, 1), 3, new int[]{0, 1}),
-                Arguments.of(LocalDate.of(12, 1, 1), 4, new int[]{0, 1, 2})
-        );
     }
 
     private Seance initSeance() {
@@ -370,18 +286,96 @@ class SeanceRepositoryTest {
     private Seance[] getSeancesForSpecializedTests() {
         Seance seance1 = new Seance(null, LocalTime.of(0, 0), LocalTime.of(1, 1),
                 LocalDate.of(1, 1, 1), LocalDate.of(10, 10, 10),
-                1.0, "1", "1", Language.UA, List.of(Day.MONDAY, Day.TUESDAY, Day.WEDNESDAY));
+                1.0, "1", "1", Language.UA, Set.of(Day.MONDAY, Day.TUESDAY, Day.WEDNESDAY));
         Seance seance2 = new Seance(null, LocalTime.of(2, 2), LocalTime.of(4, 4),
                 LocalDate.of(3, 3, 3), LocalDate.of(7, 7, 7),
-                1.0, "2", "1", Language.EN, List.of(Day.FRIDAY));
+                1.0, "2", "1", Language.EN, Set.of(Day.FRIDAY));
         Seance seance3 = new Seance(null, LocalTime.of(1, 0), LocalTime.of(5, 0),
                 LocalDate.of(9, 9, 9), LocalDate.of(11, 11, 11),
-                1.0, "2", "2", Language.UA, List.of(Day.SUNDAY, Day.MONDAY, Day.FRIDAY));
+                1.0, "2", "2", Language.UA, Set.of(Day.SUNDAY, Day.MONDAY, Day.FRIDAY));
         Seance seance4 = new Seance(null, LocalTime.of(3, 0), LocalTime.of(8, 0),
                 LocalDate.of(5, 5, 5), LocalDate.of(20, 1, 1),
-                1.0, "3", "3", Language.PL, List.of(Day.FRIDAY));
+                1.0, "3", "3", Language.PL, Set.of(Day.FRIDAY));
 
         return new Seance[]{seance1, seance2, seance3, seance4};
+    }
+
+    /**
+     * Provides arguments for testing the testFindByHallId method in {@link SeanceRepository}.
+     * The arguments are:
+     * <ul>
+     *     <li>hallId - string with hall identifier</li>
+     *     <li>expectedSize - the expected number of seances matching the hall identifier</li>
+     *     <li>expectedSeanceIndexes - the indexes of expected seances in the test data</li>
+     * </ul>
+     *
+     * @return a stream of arguments for parameterized tests
+     */
+    private static Stream<Arguments> provideArgumentsForFindByHallIdTest() {
+        return Stream.of(
+                Arguments.of("0", 0, new int[]{}),
+                Arguments.of("1", 1, new int[]{0}),
+                Arguments.of("2", 2, new int[]{1, 2})
+        );
+    }
+
+    /**
+     * Provides arguments for testing the testFindByMovieId method in {@link SeanceRepository}.
+     * The arguments are:
+     * <ul>
+     *     <li>movieId - string with movie identifier</li>
+     *     <li>expectedSize - the expected number of seances matching the movie identifier</li>
+     *     <li>expectedSeanceIndexes - the indexes of expected seances in the test data</li>
+     * </ul>
+     *
+     * @return a stream of arguments for parameterized tests
+     */
+    private static Stream<Arguments> provideArgumentsForFindByMovieIdTest() {
+        return Stream.of(
+                Arguments.of("0", 0, new int[]{}),
+                Arguments.of("1", 2, new int[]{0, 1}),
+                Arguments.of("2", 1, new int[]{2})
+        );
+    }
+
+    /**
+     * Provides arguments for testing the testFindByDateIsInSeanceDatesRange method in {@link SeanceRepository}.
+     * The arguments are:
+     * <ul>
+     *     <li>date - the date in which to search for seances</li>
+     *     <li>expectedSize - the expected number of seances with a date within the specified date</li>
+     *     <li>expectedSeanceIndexes - the indexes of expected seances in the test data</li>
+     * </ul>
+     *
+     * @return a stream of arguments for parameterized tests
+     */
+    private static Stream<Arguments> provideArgumentsForFindByDateIsInSeanceDatesRangeTest() {
+        return Stream.of(
+                Arguments.of(LocalDate.of(2, 2, 2), 1, new int[]{0}),
+                Arguments.of(LocalDate.of(3, 3, 3), 2, new int[]{0, 1}),
+                Arguments.of(LocalDate.of(8, 8, 8), 2, new int[]{0, 3}),
+                Arguments.of(LocalDate.of(11, 11, 11), 2, new int[]{2, 3}),
+                Arguments.of(LocalDate.of(12, 1, 1), 1, new int[]{3}),
+                Arguments.of(LocalDate.of(50, 1, 1), 0, new int[]{})
+        );
+    }
+
+    /**
+     * Provides arguments for testing the testDeleteByDateToBefore method in {@link SeanceRepository}.
+     * The arguments are:
+     * <ul>
+     *     <li>date - the date to delete seances with dateTo before</li>
+     *     <li>expectedRemovedSize - the expected number of removed seances</li>
+     *     <li>expectedRemovedSeanceIndexes - the indexes of expected removed seances in the test data</li>
+     * </ul>
+     *
+     * @return a stream of arguments for parameterized tests
+     */
+    private static Stream<Arguments> provideArgumentsForDeleteByDateToBeforeTest() {
+        return Stream.of(
+                Arguments.of(LocalDate.of(11, 1, 1), 3, new int[]{0, 1}),
+                Arguments.of(LocalDate.of(12, 1, 1), 4, new int[]{0, 1, 2})
+        );
     }
 
 }

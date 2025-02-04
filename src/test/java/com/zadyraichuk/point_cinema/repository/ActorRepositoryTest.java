@@ -12,10 +12,12 @@ import org.springframework.test.context.ActiveProfiles;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
+
 //TODO make fail messages formatted for better clarity
 @DisplayName("Actor repository tests")
 @DataMongoTest
@@ -41,8 +43,8 @@ class ActorRepositoryTest {
     @ParameterizedTest
     @MethodSource("provideArgumentsForCreateAndUpdateTests")
     @DisplayName("Test creating an Actor")
-    void testCreate(String firstName, String lastName, String pictureId, boolean shouldThrowException) {
-        Actor actorLocal = new Actor(firstName, lastName, pictureId);
+    void testCreate(String firstName, String lastName, boolean shouldThrowException) {
+        Actor actorLocal = new Actor(firstName, lastName, "Created");
         assertNull(actorLocal.getId(), "The actor has just created should have no ID");
 
         if (shouldThrowException) {
@@ -82,19 +84,16 @@ class ActorRepositoryTest {
         assertNotNull(foundActors, "The found list should not be null");
         assertFalse(foundActors.isEmpty(), "The found list should not be empty");
         assertEquals(expectedLength, foundActors.size(), "The size of the list should match the number of actors saved");
-
-        for (Actor a : actors) {
-            assertTrue(foundActors.contains(a), "The found actors should contain all actors saved before");
-        }
+        assertTrue(foundActors.containsAll(List.of(actors)), "The found list should contain all actors saved before");
     }
 
     @ParameterizedTest
     @MethodSource("provideArgumentsForCreateAndUpdateTests")
     @DisplayName("Test updating an Actor")
-    void testUpdate(String firstName, String lastName, String pictureId, boolean shouldThrowException) {
+    void testUpdate(String firstName, String lastName, boolean shouldThrowException) {
         Actor actorBeforeUpdate = new Actor("BeforeUpdate", "BeforeUpdate", "BeforeUpdate");
         actorBeforeUpdate = actorRepository.save(actorBeforeUpdate);
-        Actor updatedActor = new Actor(firstName, lastName, pictureId);
+        Actor updatedActor = new Actor(firstName, lastName, "Updated");
         updatedActor.setId(actorBeforeUpdate.getId());
 
         if (shouldThrowException) {
@@ -118,9 +117,8 @@ class ActorRepositoryTest {
 
         assertNotNull(savedActors, "The saved actors list should not be null");
         assertEquals(actors.length, savedActors.size(), "The size of the saved actors should match the input list size");
-        for (Actor a : savedActors) {
-            assertNotNull(a.getId(), "Each saved actor should have a generated ID");
-        }
+        Stream<String> actorIds = savedActors.stream().map(Actor::getId);
+        assertTrue(actorIds.allMatch(Objects::nonNull), "Each saved actor should have a generated ID");
 
         List<Actor> foundActors = actorRepository.findAll();
         int expectedSize = actors.length + 1;
@@ -176,8 +174,8 @@ class ActorRepositoryTest {
         assertNotNull(foundActors, "The result should not be null");
         assertEquals(expectedSize, foundActors.size(),
                 String.format("The result should contain %d actors with firstOrLastName pattern '%s'", expectedSize, firstOrLastNamePattern));
-        for (int index : expectedActorIndexes) {
-            assertTrue(foundActors.contains(actors[index]), "Actor should be in the result");
+        for (int i : expectedActorIndexes) {
+            assertTrue(foundActors.contains(actors[i]), "Actor should be in the result");
         }
     }
 
@@ -196,40 +194,9 @@ class ActorRepositoryTest {
         assertNotNull(foundActors, "The result should not be null");
         assertEquals(expectedSize, foundActors.size(),
                 String.format("The result should contain %d actors with firstOrLastName pattern '%s %s'", expectedSize, firstNamePattern, lastNamePattern));
-        for (int index : expectedActorIndexes) {
-            assertTrue(foundActors.contains(actors[index]), "Actor should be in the result");
+        for (int i : expectedActorIndexes) {
+            assertTrue(foundActors.contains(actors[i]), "Actor should be in the result");
         }
-    }
-
-    private static Stream<Arguments> provideArgumentsForCreateAndUpdateTests() {
-        return Stream.of(
-                Arguments.of("Unique", "Unique", "Unique", false),
-                Arguments.of(actor.getFirstName(), "Unique", "Unique", false),
-                Arguments.of("Unique", actor.getLastName(), "Unique", false),
-                Arguments.of(actor.getFirstName(), actor.getLastName(), "Unique", true)
-        );
-    }
-
-    private static Stream<Arguments> provideArgumentsForFindByFirstNameOrLastNameTest() {
-        return Stream.of(
-                Arguments.of("One", 2, new int[]{0, 1}),
-                Arguments.of("one", 2, new int[]{0, 1}),
-                Arguments.of("Two", 2, new int[]{0, 2}),
-                Arguments.of("", 4, new int[]{0, 1, 2}),
-                Arguments.of("123", 0, new int[]{}));
-    }
-
-    private static Stream<Arguments> provideArgumentsForFindByFirstNameAndLastNameTest() {
-        return Stream.of(
-                Arguments.of("Three", "123", 0, new int[]{}),
-                Arguments.of("123", "Four", 0, new int[]{}),
-                Arguments.of("One", "Two", 1, new int[]{0}),
-                Arguments.of("one", "two", 1, new int[]{0}),
-                Arguments.of("o", "t", 1, new int[]{0}),
-                Arguments.of("O", "T", 1, new int[]{0}),
-                Arguments.of("123", "123", 0, new int[]{}),
-                Arguments.of("", "", 4, new int[]{0, 1, 2})
-        );
     }
 
     private Actor initActor() {
@@ -250,6 +217,69 @@ class ActorRepositoryTest {
         Actor actor3 = new Actor("Two", "Four", "pic3");
 
         return new Actor[]{actor1, actor2, actor3};
+    }
+
+    /**
+     * Provides arguments for testing create and update methods in {@link ActorRepository}.
+     * The arguments are:
+     * <ul>
+     *     <li>firstName - the first name of the actor</li>
+     *     <li>lastName - the last name of the actor</li>
+     *     <li>shouldThrowException - whether the save operation should throw a DuplicateKeyException</li>
+     * </ul>
+     */
+    private static Stream<Arguments> provideArgumentsForCreateAndUpdateTests() {
+        return Stream.of(
+                Arguments.of("Unique", "Unique", false),
+                Arguments.of(actor.getFirstName(), "Unique", false),
+                Arguments.of("Unique", actor.getLastName(), false),
+                Arguments.of(actor.getFirstName(), actor.getLastName(), true)
+        );
+    }
+
+
+    /**
+     * Provides arguments for testing find by first name or last name methods in {@link ActorRepository}.
+     * The arguments are:
+     * <ul>
+     *     <li>firstNamePattern - the pattern to match against the actor's first name, ignoring case</li>
+     *     <li>lastNamePattern - the pattern to match against the actor's last name, ignoring case</li>
+     *     <li>expectedSize - the expected number of actors containing the actor with the specified first name and last name</li>
+     *     <li>expectedActorIndexes - the indexes of expected actors in the test data</li>
+     * </ul>
+     */
+    private static Stream<Arguments> provideArgumentsForFindByFirstNameOrLastNameTest() {
+        return Stream.of(
+                Arguments.of("One", 2, new int[]{0, 1}),
+                Arguments.of("one", 2, new int[]{0, 1}),
+                Arguments.of("Two", 2, new int[]{0, 2}),
+                Arguments.of("", 4, new int[]{0, 1, 2}),
+                Arguments.of("123", 0, new int[]{}));
+    }
+
+    /**
+     * Provides arguments for testing find by first name and last name methods in {@link ActorRepository}.
+     * The arguments are:
+     * <ul>
+     *     <li>firstNamePattern - the pattern to match against the actor's first name, ignoring case</li>
+     *     <li>lastNamePattern - the pattern to match against the actor's last name, ignoring case</li>
+     *     <li>expectedSize - the expected number of actors containing the actor with the specified first name and last name</li>
+     *     <li>expectedActorIndexes - the indexes of expected actors in the test data</li>
+     * </ul>
+     *
+     * @return a stream of arguments for parameterized tests
+     */
+    private static Stream<Arguments> provideArgumentsForFindByFirstNameAndLastNameTest() {
+        return Stream.of(
+                Arguments.of("Three", "123", 0, new int[]{}),
+                Arguments.of("123", "Four", 0, new int[]{}),
+                Arguments.of("One", "Two", 1, new int[]{0}),
+                Arguments.of("one", "two", 1, new int[]{0}),
+                Arguments.of("o", "t", 1, new int[]{0}),
+                Arguments.of("O", "T", 1, new int[]{0}),
+                Arguments.of("123", "123", 0, new int[]{}),
+                Arguments.of("", "", 4, new int[]{0, 1, 2})
+        );
     }
 
 }

@@ -18,6 +18,7 @@ import org.springframework.test.context.ActiveProfiles;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Stream;
 
@@ -89,10 +90,7 @@ class RatingRepositoryTest {
         assertNotNull(foundRatings, "The found list should not be null");
         assertFalse(foundRatings.isEmpty(), "The found list should not be empty");
         assertEquals(expectedLength, foundRatings.size(), "The size of the list should match the number of ratings saved");
-
-        for (Rating a : ratings) {
-            assertTrue(foundRatings.contains(a), "The found ratings should contain all ratings saved before");
-        }
+        assertTrue(foundRatings.containsAll(Arrays.asList(ratings)), "The found ratings should contain all ratings saved before");
     }
 
     @ParameterizedTest
@@ -125,9 +123,8 @@ class RatingRepositoryTest {
 
         assertNotNull(savedRatings, "The saved ratings list should not be null");
         assertEquals(ratings.length, savedRatings.size(), "The size of the saved ratings should match the input list size");
-        for (Rating a : savedRatings) {
-            assertNotNull(a.getId(), "Each saved rating should have a generated ID");
-        }
+        Stream<String> ratingIds = savedRatings.stream().map(Rating::getId);
+        assertTrue(ratingIds.allMatch(Objects::nonNull), "Each saved rating should have a generated ID");
 
         List<Rating> foundRatings = ratingRepository.findAll();
         int expectedSize = ratings.length + 1;
@@ -170,7 +167,7 @@ class RatingRepositoryTest {
     }
 
     @ParameterizedTest
-    @MethodSource("provideArgumentsForFindAndDeleteByUserId")
+    @MethodSource("provideArgumentsForFindAndDeleteByUserIdTest")
     @DisplayName("Test finding an Rating by User Id")
     void testFindByUserId(String userId,
                           int expectedSize,
@@ -180,18 +177,17 @@ class RatingRepositoryTest {
 
         Pageable pageable = PageRequest.of(0, 10);
         Page<Rating> foundRatings = ratingRepository.findByUserId(userId, pageable);
-        List<Rating> foundContent = foundRatings.getContent();
 
         assertNotNull(foundRatings, "The result should not be null");
-        assertEquals(expectedSize, foundContent.size(),
+        assertEquals(expectedSize, foundRatings.getContent().size(),
                 String.format("The result should contain %d ratings with userId '%s'", expectedSize, userId));
-        for (int index : expectedRatingIndexes) {
-            assertTrue(foundContent.contains(ratings[index]), "Rating should be in the result");
+        for (int i : expectedRatingIndexes) {
+            assertTrue(foundRatings.getContent().contains(ratings[i]), "Rating should be in the result");
         }
     }
 
     @ParameterizedTest
-    @MethodSource("provideArgumentsForFindAndDeleteByMovieId")
+    @MethodSource("provideArgumentsForFindAndDeleteByMovieIdTest")
     @DisplayName("Test finding an Rating by Movie Id")
     void testFindByMovieId(String movieId,
                            int expectedSize,
@@ -201,18 +197,17 @@ class RatingRepositoryTest {
 
         Pageable pageable = PageRequest.of(0, 10);
         Page<Rating> foundRatings = ratingRepository.findByMovieId(movieId, pageable);
-        List<Rating> foundContent = foundRatings.getContent();
 
         assertNotNull(foundRatings, "The result should not be null");
-        assertEquals(expectedSize, foundContent.size(),
+        assertEquals(expectedSize, foundRatings.getContent().size(),
                 String.format("The result should contain %d ratings with movieId '%s'", expectedSize, movieId));
-        for (int index : expectedRatingIndexes) {
-            assertTrue(foundContent.contains(ratings[index]), "Rating should be in the result");
+        for (int i : expectedRatingIndexes) {
+            assertTrue(foundRatings.getContent().contains(ratings[i]), "Rating should be in the result");
         }
     }
 
     @ParameterizedTest
-    @MethodSource("provideArgumentsForFindByUserIdAndMovieId")
+    @MethodSource("provideArgumentsForFindByUserIdAndMovieIdTest")
     @DisplayName("Test finding an Rating by User Id and Movie Id")
     void testFindByUserIdAndMovieId(String userId,
                                     String movieId,
@@ -237,7 +232,7 @@ class RatingRepositoryTest {
     }
 
     @ParameterizedTest
-    @MethodSource("provideArgumentsForFindAndDeleteByUserId")
+    @MethodSource("provideArgumentsForFindAndDeleteByUserIdTest")
     @DisplayName("Test deleting Ratings by User Id")
     void testDeleteByUserId(String userId,
                             int expectedRemovedSize,
@@ -251,8 +246,8 @@ class RatingRepositoryTest {
         assertNotNull(foundRatings, "The result should not be null");
         assertEquals(expectedRemovedSize, ratings.length - foundRatings.size() + 1,
                 String.format("The result should contain %d ratings with userId '%s'", expectedRemovedSize, userId));
-        for (int index : expectedRemovedRatingIndexes) {
-            assertFalse(foundRatings.contains(ratings[index]), "Rating should not be in the result");
+        for (int i : expectedRemovedRatingIndexes) {
+            assertFalse(foundRatings.contains(ratings[i]), "Rating should not be in the result");
         }
 
         Pageable pageable = PageRequest.of(0, 10);
@@ -261,7 +256,7 @@ class RatingRepositoryTest {
     }
 
     @ParameterizedTest
-    @MethodSource("provideArgumentsForFindAndDeleteByMovieId")
+    @MethodSource("provideArgumentsForFindAndDeleteByMovieIdTest")
     @DisplayName("Test deleting Ratings by Movie Id")
     void testDeleteByMovieId(String movieId,
                              int expectedRemovedSize,
@@ -275,13 +270,34 @@ class RatingRepositoryTest {
         assertNotNull(foundRatings, "The result should not be null");
         assertEquals(expectedRemovedSize, ratings.length - foundRatings.size() + 1,
                 String.format("The result should contain %d ratings with movieId '%s'", expectedRemovedSize, movieId));
-        for (int index : expectedRemovedRatingIndexes) {
-            assertFalse(foundRatings.contains(ratings[index]), "Rating should not be in the result");
+        for (int i : expectedRemovedRatingIndexes) {
+            assertFalse(foundRatings.contains(ratings[i]), "Rating should not be in the result");
         }
 
         Pageable pageable = PageRequest.of(0, 10);
         Page<Rating> foundRatingsByMovie = ratingRepository.findByMovieId(movieId, pageable);
         assertTrue(foundRatingsByMovie.isEmpty(), "The result should be empty");
+    }
+
+    private Rating initRating() {
+        return new Rating(1, "test", "test");
+    }
+
+    private Rating[] getRatingsForGeneralCrudTests() {
+        Rating unique1 = new Rating(1, "Unique", "Unique");
+        Rating unique2 = new Rating(1, rating.getUserId(), "Unique");
+        Rating unique3 = new Rating(1, "Unique", rating.getMovieId());
+
+        return new Rating[]{unique1, unique2, unique3};
+    }
+
+    private Rating[] getRatingsForSpecializedTests() {
+        Rating rating1 = new Rating(1, "1", "1");
+        Rating rating2 = new Rating(1, "1", "2");
+        Rating rating3 = new Rating(1, "2", "3");
+        Rating rating4 = new Rating(1, "3", "2");
+
+        return new Rating[]{rating1, rating2, rating3, rating4};
     }
 
     /**
@@ -315,7 +331,7 @@ class RatingRepositoryTest {
      *
      * @return a stream of arguments for parameterized tests
      */
-    private static Stream<Arguments> provideArgumentsForFindAndDeleteByUserId() {
+    private static Stream<Arguments> provideArgumentsForFindAndDeleteByUserIdTest() {
         return Stream.of(
                 Arguments.of("1", 2, new int[]{0, 1}),
                 Arguments.of("2", 1, new int[]{2})
@@ -333,7 +349,7 @@ class RatingRepositoryTest {
      *
      * @return a stream of arguments for parameterized tests
      */
-    private static Stream<Arguments> provideArgumentsForFindAndDeleteByMovieId() {
+    private static Stream<Arguments> provideArgumentsForFindAndDeleteByMovieIdTest() {
         return Stream.of(
                 Arguments.of("1", 1, new int[]{0}),
                 Arguments.of("2", 2, new int[]{1, 3})
@@ -352,34 +368,13 @@ class RatingRepositoryTest {
      *
      * @return a stream of arguments for parameterized tests
      */
-    private static Stream<Arguments> provideArgumentsForFindByUserIdAndMovieId() {
+    private static Stream<Arguments> provideArgumentsForFindByUserIdAndMovieIdTest() {
         return Stream.of(
                 Arguments.of("1", "1", true, 0),
                 Arguments.of("1", "2", true, 1),
                 Arguments.of("2", "2", false, 0),
                 Arguments.of("2", "3", true, 2)
         );
-    }
-
-    private Rating initRating() {
-        return new Rating(1, "test", "test");
-    }
-
-    private Rating[] getRatingsForGeneralCrudTests() {
-        Rating unique1 = new Rating(1, "Unique", "Unique");
-        Rating unique2 = new Rating(1, rating.getUserId(), "Unique");
-        Rating unique3 = new Rating(1, "Unique", rating.getMovieId());
-
-        return new Rating[]{unique1, unique2, unique3};
-    }
-
-    private Rating[] getRatingsForSpecializedTests() {
-        Rating rating1 = new Rating(1, "1", "1");
-        Rating rating2 = new Rating(1, "1", "2");
-        Rating rating3 = new Rating(1, "2", "3");
-        Rating rating4 = new Rating(1, "3", "2");
-
-        return new Rating[]{rating1, rating2, rating3, rating4};
     }
 
 }

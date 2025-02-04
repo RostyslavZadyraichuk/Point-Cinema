@@ -17,6 +17,7 @@ import org.springframework.test.context.ActiveProfiles;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Stream;
 
@@ -77,10 +78,7 @@ class MessageRepositoryTest {
         assertNotNull(foundMessages, "The found list should not be null");
         assertFalse(foundMessages.isEmpty(), "The found list should not be empty");
         assertEquals(expectedLength, foundMessages.size(), "The size of the list should match the number of messages saved");
-
-        for (Message a : messages) {
-            assertTrue(foundMessages.contains(a), "The found messages should contain all messages saved before");
-        }
+        assertTrue(foundMessages.containsAll(Arrays.asList(messages)), "The found messages should contain all messages saved before");
     }
 
     @Test
@@ -103,9 +101,8 @@ class MessageRepositoryTest {
 
         assertNotNull(savedMessages, "The saved messages list should not be null");
         assertEquals(messages.length, savedMessages.size(), "The size of the saved messages should match the input list size");
-        for (Message a : savedMessages) {
-            assertNotNull(a.getId(), "Each saved message should have a generated ID");
-        }
+        Stream<String> messageIds = savedMessages.stream().map(Message::getId);
+        assertTrue(messageIds.allMatch(Objects::nonNull), "Each saved message should have a generated ID");
 
         List<Message> foundMessages = messageRepository.findAll();
         int expectedSize = messages.length + 1;

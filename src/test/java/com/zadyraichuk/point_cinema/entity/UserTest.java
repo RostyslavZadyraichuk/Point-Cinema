@@ -6,6 +6,7 @@ import org.junit.jupiter.params.provider.ValueSource;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -21,9 +22,9 @@ class UserTest {
     private static String phone;
     private static Role role;
     private static String pictureId;
-    private static List<String> favouriteMovieIds;
-    private static List<String> viewedMovieIds;
-    private static List<String> waitMovieIds;
+    private static Set<String> favouriteMovieIds;
+    private static Set<String> viewedMovieIds;
+    private static Set<String> waitMovieIds;
     private static List<String> messageIds;
 
     private User user;
@@ -39,9 +40,9 @@ class UserTest {
         UserTest.phone = "123456789";
         UserTest.role = Role.USER;
         UserTest.pictureId = "1";
-        UserTest.favouriteMovieIds = Collections.emptyList();
-        UserTest.viewedMovieIds = Collections.emptyList();
-        UserTest.waitMovieIds = Collections.emptyList();
+        UserTest.favouriteMovieIds = Collections.emptySet();
+        UserTest.viewedMovieIds = Collections.emptySet();
+        UserTest.waitMovieIds = Collections.emptySet();
         UserTest.messageIds = Collections.emptyList();
     }
 
@@ -62,9 +63,9 @@ class UserTest {
         String phoneLocal = "100";
         Role roleLocal = Role.USER;
         String pictureIdLocal = "100";
-        List<String> favouriteMovieIdsLocal = Collections.emptyList();
-        List<String> viewedMovieIdsLocal = Collections.emptyList();
-        List<String> waitMovieIdsLocal = Collections.emptyList();
+        Set<String> favouriteMovieIdsLocal = Collections.emptySet();
+        Set<String> viewedMovieIdsLocal = Collections.emptySet();
+        Set<String> waitMovieIdsLocal = Collections.emptySet();
         List<String> messageIdsLocal = Collections.emptyList();
 
         user = new User(
@@ -159,9 +160,9 @@ class UserTest {
             String phoneLocal = "1000";
             Role roleLocal = Role.ADMIN;
             String pictureIdLocal = "1000";
-            List<String> favouriteMovieIdsLocal = Collections.emptyList();
-            List<String> viewedMovieIdsLocal = Collections.emptyList();
-            List<String> waitMovieIdsLocal = Collections.emptyList();
+            Set<String> favouriteMovieIdsLocal = Collections.emptySet();
+            Set<String> viewedMovieIdsLocal = Collections.emptySet();
+            Set<String> waitMovieIdsLocal = Collections.emptySet();
             List<String> messageIdsLocal = Collections.emptyList();
 
             user = User.builder()
@@ -199,9 +200,9 @@ class UserTest {
         @DisplayName("Test builder defaults to empty collections if no values are added")
         void testBuilderEmptyCollections() {
             user = User.builder().build();
-            List<String> favouriteMovieIdsActual = user.getFavouriteMovieIds();
-            List<String> viewedMovieIdsActual = user.getViewedMovieIds();
-            List<String> waitMovieIdsActual = user.getWaitMovieIds();
+            Set<String> favouriteMovieIdsActual = user.getFavouriteMovieIds();
+            Set<String> viewedMovieIdsActual = user.getViewedMovieIds();
+            Set<String> waitMovieIdsActual = user.getWaitMovieIds();
             List<String> messageIdsActual = user.getMessageIds();
 
             assertNotNull(favouriteMovieIdsActual, "Favourite movies should not be null");
@@ -217,9 +218,9 @@ class UserTest {
         @Test
         @DisplayName("Test @Singular fields handle multiple values correctly")
         void testSingularFields_whenAdd() {
-            List<String> favouriteMovieIdsExpected = List.of("favorite1", "favorite2");
-            List<String> viewedMovieIdsExpected = List.of("viewed1", "viewed2");
-            List<String> waitMovieIdsExpected = List.of("wait1", "wait2");
+            Set<String> favouriteMovieIdsExpected = Set.of("favorite1", "favorite2");
+            Set<String> viewedMovieIdsExpected = Set.of("viewed1", "viewed2");
+            Set<String> waitMovieIdsExpected = Set.of("wait1", "wait2");
             List<String> messageIdsExpected = List.of("message1", "message2");
 
             user = User.builder()
