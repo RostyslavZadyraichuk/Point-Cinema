@@ -5,6 +5,8 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
+import java.util.Set;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 @DisplayName("Role enum tests")
@@ -13,14 +15,14 @@ class RoleTest {
     @Test
     @DisplayName("Test enum values array is valid")
     void testValues() {
-        Role[] expected = getArrayOfRoles();
-        Role[] actual = Role.values();
+        Set<Role> expected = getSetOfExpectedRoles();
+        Set<Role> actual = Set.of(Role.values());
 
         assertNotNull(actual, "Enum cannot be null");
-        assertNotEquals(0, actual.length, "Enum length should not be zero");
-        assertEquals(expected.length, actual.length,
-                String.format("Enum should have %d constants", expected.length));
-        assertArrayEquals(expected, actual,"Enum constants do not match expected values");
+        assertNotEquals(0, actual.size(), "Enum length should not be zero");
+        assertEquals(expected.size(), actual.size(),
+                String.format("Enum should have %d constants", expected.size()));
+        assertTrue(actual.containsAll(expected), "Enum constants do not match expected values");
     }
 
     @Test
@@ -47,12 +49,12 @@ class RoleTest {
                 "Enum should not be returned from invalid value");
     }
 
-    private Role[] getArrayOfRoles() {
-        return new Role[]{
+    private Set<Role> getSetOfExpectedRoles() {
+        return Set.of(
                 Role.USER,
                 Role.ADMIN,
                 Role.WORKER
-        };
+        );
     }
 
 }

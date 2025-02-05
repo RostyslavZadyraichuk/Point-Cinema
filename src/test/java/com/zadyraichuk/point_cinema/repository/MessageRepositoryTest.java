@@ -1,18 +1,12 @@
 package com.zadyraichuk.point_cinema.repository;
 
-import com.zadyraichuk.point_cinema.entity.Cinema;
-import com.zadyraichuk.point_cinema.entity.Country;
 import com.zadyraichuk.point_cinema.entity.Message;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.Arguments;
-import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.data.mongo.DataMongoTest;
-import org.springframework.dao.DuplicateKeyException;
 import org.springframework.test.context.ActiveProfiles;
 
 import java.util.Arrays;
@@ -23,7 +17,6 @@ import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-//TODO make fail messages formatted for better clarity
 @DisplayName("Message repository tests")
 @DataMongoTest
 @ActiveProfiles("test")

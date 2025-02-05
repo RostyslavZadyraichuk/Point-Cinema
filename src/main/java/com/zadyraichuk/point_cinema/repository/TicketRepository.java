@@ -2,7 +2,6 @@ package com.zadyraichuk.point_cinema.repository;
 
 import com.zadyraichuk.point_cinema.entity.Ticket;
 import org.springframework.data.mongodb.repository.MongoRepository;
-import org.springframework.data.mongodb.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;

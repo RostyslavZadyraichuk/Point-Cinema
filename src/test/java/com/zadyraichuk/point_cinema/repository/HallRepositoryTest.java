@@ -22,7 +22,6 @@ import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-//TODO make fail messages formatted for better clarity
 @DisplayName("Hall repository tests")
 @DataMongoTest
 @ActiveProfiles("test")

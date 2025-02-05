@@ -1,6 +1,5 @@
 package com.zadyraichuk.point_cinema.repository;
 
-import com.zadyraichuk.point_cinema.entity.Seance;
 import com.zadyraichuk.point_cinema.entity.Ticket;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -23,7 +22,6 @@ import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-//TODO make fail messages formatted for better clarity
 @DisplayName("Ticket repository tests")
 @DataMongoTest
 @ActiveProfiles("test")
