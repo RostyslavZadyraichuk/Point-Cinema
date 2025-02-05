@@ -8,7 +8,7 @@ import org.springframework.data.mongodb.core.mapping.Field;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
-import java.util.List;
+import java.util.Set;
 
 /**
  * Represents a movie seance (screening) with details about timing, pricing, and other attributes.
@@ -23,16 +23,17 @@ import java.util.List;
  * <li>{@code @Builder} implements builder pattern.</li>
  * <li>{@code @Indexed} and {@code @CompoundIndex} define fields are indexed in database for quicker search.
  * Key {@code unique = true} means database supports uniqueness of marked fields additionally.</li>
+ * <li>{@code @EqualsAndHashCode} overrides equals and hashCode methods.</li>
  * </ul>
  * </p>
  *
  * @author Rostyslav Zadyraichuk
- * @version 0.2
  */
 @Document(collection = "seance")
 @AllArgsConstructor
 @Getter
 @Builder
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class Seance {
 
     /**
@@ -40,6 +41,7 @@ public class Seance {
      */
     @Id
     @Setter
+    @EqualsAndHashCode.Include
     private String id;
 
     /**
@@ -95,9 +97,9 @@ public class Seance {
     private final Language seanceLanguage = Language.UA;
 
     /**
-     * The list of days on which the seance is scheduled.
+     * The set of days on which the seance is scheduled.
      */
     @Singular("day")
-    private final List<Day> days;
+    private final Set<Day> days;
 
 }

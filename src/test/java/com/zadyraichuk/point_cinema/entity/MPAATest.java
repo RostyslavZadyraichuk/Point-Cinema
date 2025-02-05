@@ -5,6 +5,8 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
+import java.util.Set;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 @DisplayName("MPAA rating enum tests")
@@ -13,15 +15,14 @@ class MPAATest {
     @Test
     @DisplayName("Test enum values array is valid")
     void testValues() {
-        MPAA[] expected = getArrayOfRatings();
-        MPAA[] actual = MPAA.values();
+        Set<MPAA> expected = getSetOfExpectedRatings();
+        Set<MPAA> actual = Set.of(MPAA.values());
 
         assertNotNull(actual, "Enum cannot be null");
-        assertNotEquals(0, actual.length, "Enum length should not be zero");
-        assertEquals(expected.length, actual.length,
-                String.format("Enum should have %d constants", expected.length));
-        //todo change all enum's assertArrayEquals to assertEqualLength and assertContainsAllElements
-        assertArrayEquals(expected, actual,"Enum constants do not match expected values");
+        assertNotEquals(0, actual.size(), "Enum length should not be zero");
+        assertEquals(expected.size(), actual.size(),
+                String.format("Enum should have %d constants", expected.size()));
+        assertTrue(actual.containsAll(expected), "Enum constants do not match expected values");
     }
 
     @Test
@@ -58,14 +59,14 @@ class MPAATest {
         assertEquals(rating, actual, "Rating of mpaa should be equal to it's name");
     }
 
-    private MPAA[] getArrayOfRatings() {
-        return new MPAA[]{
+    private Set<MPAA> getSetOfExpectedRatings() {
+        return Set.of(
                 MPAA.G,
                 MPAA.PG,
                 MPAA.PG_13,
                 MPAA.R,
                 MPAA.NC_17
-        };
+        );
     }
 
 }

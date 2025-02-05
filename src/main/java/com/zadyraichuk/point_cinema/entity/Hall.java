@@ -19,16 +19,17 @@ import org.springframework.data.mongodb.core.mapping.Field;
  * <li>{@code @Builder} implements builder pattern.</li>
  * <li>{@code @Indexed} and {@code @CompoundIndex} define fields are indexed in database for quicker search.
  * Key {@code unique = true} means database supports uniqueness of marked fields additionally.</li>
+ * <li>{@code @EqualsAndHashCode} overrides equals and hashCode methods.</li>
  * </ul>
  * </p>
  *
  * @author Rostyslav Zadyraichuk
- * @version 0.2
  */
 @Document(collection = "hall")
 @AllArgsConstructor
 @Getter
 @Builder
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @CompoundIndex(def = "{'number': 1, 'cinemaId': 1}", unique = true)
 public class Hall {
 
@@ -37,6 +38,7 @@ public class Hall {
      */
     @Id
     @Setter
+    @EqualsAndHashCode.Include
     private String id;
 
     /**

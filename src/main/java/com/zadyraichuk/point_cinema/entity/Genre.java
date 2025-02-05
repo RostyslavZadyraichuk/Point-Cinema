@@ -5,7 +5,6 @@ package com.zadyraichuk.point_cinema.entity;
  * Each genre is a category used to classify content based on its themes and style.
  *
  * @author Rostyslav Zadyraichuk
- * @version 0.1
  */
 public enum Genre {
 

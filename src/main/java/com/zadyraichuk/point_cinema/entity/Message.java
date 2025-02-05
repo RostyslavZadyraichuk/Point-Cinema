@@ -14,15 +14,16 @@ import org.springframework.data.mongodb.core.mapping.Document;
  * <li>{@code @Getter} generates getters for all fields.</li>
  * <li>{@code @Setter} generates a setter for the {@code id} field.</li>
  * <li>{@code @RequiredArgsConstructor} generates a constructor for {@code text}, which is final field.</li>
+ * <li>{@code @EqualsAndHashCode} overrides equals and hashCode methods.</li>
  * </ul>
  * </p>
  *
  * @author Rostyslav Zadyraichuk
- * @version 0.2
  */
 @Document(collection = "message")
 @RequiredArgsConstructor
 @Getter
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class Message {
 
     /**
@@ -31,6 +32,7 @@ public class Message {
      */
     @Id
     @Setter
+    @EqualsAndHashCode.Include
     private String id;
 
     /**

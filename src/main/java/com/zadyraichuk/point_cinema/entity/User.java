@@ -7,6 +7,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
 
 import java.util.List;
+import java.util.Set;
 
 /**
  * Represents a user entity in the system.
@@ -22,16 +23,17 @@ import java.util.List;
  * <li>{@code @Builder} implements builder pattern.</li>
  * <li>{@code @Indexed} and {@code @CompoundIndex} define fields are indexed in database for quicker search.
  * Key {@code unique = true} means database supports uniqueness of marked fields additionally.</li>
+ * <li>{@code @EqualsAndHashCode} overrides equals and hashCode methods.</li>
  * </ul>
  * </p>
  *
  * @author Rostyslav Zadyraichuk
- * @version 0.2
  */
 @Document(collection = "user")
 @AllArgsConstructor
 @Getter
 @Builder
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class User {
 
     /**
@@ -40,6 +42,7 @@ public class User {
      */
     @Id
     @Setter
+    @EqualsAndHashCode.Include
     private String id;
 
     /**
@@ -87,15 +90,6 @@ public class User {
     private final Role role = Role.USER;
 
     /**
-     * A list of ticket IDs associated with the user.
-     * Represents the tickets the user has booked.
-     * Stored in the database with the field name "ticket_ids".
-     */
-    @Field(name = "ticket_ids")
-    @Singular("ticketId")
-    private final List<String> ticketIds;
-
-    /**
      * The ID of the user's profile picture.
      * Stored in the database with the field name "user_picture_id".
      */
@@ -103,28 +97,28 @@ public class User {
     private final String pictureId;
 
     /**
-     * A list of IDs of the user's favourite movies.
+     * A set of IDs of the user's favourite movies.
      * Stored in the database with the field name "favourite_movie_ids".
      */
     @Field(name = "favourite_movie_ids")
     @Singular("favouriteMovieId")
-    private final List<String> favouriteMovieIds;
+    private final Set<String> favouriteMovieIds;
 
     /**
-     * A list of IDs of movies the user has viewed.
+     * A set of IDs of movies the user has viewed.
      * Stored in the database with the field name "viewed_movie_ids".
      */
     @Field(name = "viewed_movie_ids")
     @Singular("viewedMovieId")
-    private final List<String> viewedMovieIds;
+    private final Set<String> viewedMovieIds;
 
     /**
-     * A list of IDs of movies the user is waiting for.
+     * A set of IDs of movies the user is waiting for.
      * Stored in the database with the field name "wait_movie_ids".
      */
     @Field(name = "wait_movie_ids")
     @Singular("waitMovieId")
-    private final List<String> waitMovieIds;
+    private final Set<String> waitMovieIds;
 
     /**
      * A list of message IDs associated with the user.

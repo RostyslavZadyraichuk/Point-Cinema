@@ -7,7 +7,7 @@ import org.junit.jupiter.params.provider.ValueSource;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.Collections;
-import java.util.List;
+import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -23,7 +23,7 @@ class SeanceTest {
     private static String hallId;
     private static String movieId;
     private static Language seanceLang;
-    private static List<Day> days;
+    private static Set<Day> days;
 
     private Seance seance;
 
@@ -38,7 +38,7 @@ class SeanceTest {
         SeanceTest.hallId = "1";
         SeanceTest.movieId = "1";
         SeanceTest.seanceLang = Language.UA;
-        SeanceTest.days = Collections.emptyList();
+        SeanceTest.days = Collections.emptySet();
     }
 
     @BeforeEach
@@ -58,7 +58,7 @@ class SeanceTest {
         String hallIdLocal = "100";
         String movieIdLocal = "100";
         Language seanceLangLocal = Language.PL;
-        List<Day> daysLocal = Collections.emptyList();
+        Set<Day> daysLocal = Collections.emptySet();
 
         seance = new Seance(
                 idLocal,
@@ -140,7 +140,7 @@ class SeanceTest {
             String hallIdLocal = "1000";
             String movieIdLocal = "1000";
             Language seanceLangLocal = Language.EN;
-            List<Day> daysLocal = Collections.emptyList();
+            Set<Day> daysLocal = Collections.emptySet();
 
             seance = Seance.builder()
                     .id(idLocal)
@@ -171,7 +171,7 @@ class SeanceTest {
         @DisplayName("Test builder defaults to empty collections if no values are added")
         void testBuilderEmptyCollections() {
             Seance actual = Seance.builder().build();
-            List<Day> daysActual = actual.getDays();
+            Set<Day> daysActual = actual.getDays();
 
             assertNotNull(daysActual, "Days should not be null");
             assertTrue(daysActual.isEmpty(), "Days should be empty");
@@ -180,7 +180,7 @@ class SeanceTest {
         @Test
         @DisplayName("Test @Singular fields handle multiple values correctly")
         void testSingularFields_whenAdd() {
-            List<Day> daysExpected = List.of(Day.MONDAY, Day.TUESDAY, Day.WEDNESDAY);
+            Set<Day> daysExpected = Set.of(Day.MONDAY, Day.TUESDAY, Day.WEDNESDAY);
 
             Seance actual = Seance.builder()
                     .day(Day.MONDAY)

@@ -6,6 +6,7 @@ import org.junit.jupiter.params.provider.ValueSource;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -20,11 +21,10 @@ class UserTest {
     private static String email;
     private static String phone;
     private static Role role;
-    private static List<String> ticketIds;
     private static String pictureId;
-    private static List<String> favouriteMovieIds;
-    private static List<String> viewedMovieIds;
-    private static List<String> waitMovieIds;
+    private static Set<String> favouriteMovieIds;
+    private static Set<String> viewedMovieIds;
+    private static Set<String> waitMovieIds;
     private static List<String> messageIds;
 
     private User user;
@@ -39,11 +39,10 @@ class UserTest {
         UserTest.email = "john@doe.com";
         UserTest.phone = "123456789";
         UserTest.role = Role.USER;
-        UserTest.ticketIds = Collections.emptyList();
         UserTest.pictureId = "1";
-        UserTest.favouriteMovieIds = Collections.emptyList();
-        UserTest.viewedMovieIds = Collections.emptyList();
-        UserTest.waitMovieIds = Collections.emptyList();
+        UserTest.favouriteMovieIds = Collections.emptySet();
+        UserTest.viewedMovieIds = Collections.emptySet();
+        UserTest.waitMovieIds = Collections.emptySet();
         UserTest.messageIds = Collections.emptyList();
     }
 
@@ -64,10 +63,9 @@ class UserTest {
         String phoneLocal = "100";
         Role roleLocal = Role.USER;
         String pictureIdLocal = "100";
-        List<String> ticketIdsLocal = Collections.emptyList();
-        List<String> favouriteMovieIdsLocal = Collections.emptyList();
-        List<String> viewedMovieIdsLocal = Collections.emptyList();
-        List<String> waitMovieIdsLocal = Collections.emptyList();
+        Set<String> favouriteMovieIdsLocal = Collections.emptySet();
+        Set<String> viewedMovieIdsLocal = Collections.emptySet();
+        Set<String> waitMovieIdsLocal = Collections.emptySet();
         List<String> messageIdsLocal = Collections.emptyList();
 
         user = new User(
@@ -79,7 +77,6 @@ class UserTest {
                 emailLocal,
                 phoneLocal,
                 roleLocal,
-                ticketIdsLocal,
                 pictureIdLocal,
                 favouriteMovieIdsLocal,
                 viewedMovieIdsLocal,
@@ -95,7 +92,6 @@ class UserTest {
         assertEquals(emailLocal, user.getEmail(), "Email does not match the expected value");
         assertEquals(phoneLocal, user.getPhone(), "Phone does not match the expected value");
         assertEquals(roleLocal, user.getRole(), "Role does not match the expected value");
-        assertEquals(ticketIdsLocal, user.getTicketIds(), "Ticket ids does not match the expected value");
         assertEquals(pictureIdLocal, user.getPictureId(), "Picture id does not match the expected value");
         assertEquals(favouriteMovieIdsLocal, user.getFavouriteMovieIds(), "Favourite movie ids does not match the expected value");
         assertEquals(viewedMovieIdsLocal, user.getViewedMovieIds(), "Viewed movie ids does not match the expected value");
@@ -123,7 +119,6 @@ class UserTest {
         assertEquals(UserTest.email, user.getEmail(), "Getter for name returned an unexpected value");
         assertEquals(UserTest.phone, user.getPhone(), "Getter for name returned an unexpected value");
         assertEquals(UserTest.role, user.getRole(), "Getter for name returned an unexpected value");
-        assertEquals(UserTest.ticketIds, user.getTicketIds(), "Getter for id returned an unexpected value");
         assertEquals(UserTest.pictureId, user.getPictureId(), "Getter for id returned an unexpected value");
         assertEquals(UserTest.favouriteMovieIds, user.getFavouriteMovieIds(), "Getter for id returned an unexpected value");
         assertEquals(UserTest.viewedMovieIds, user.getViewedMovieIds(), "Getter for id returned an unexpected value");
@@ -141,7 +136,6 @@ class UserTest {
                 .email(UserTest.email)
                 .phone(UserTest.phone)
                 .role(UserTest.role)
-                .ticketIds(UserTest.ticketIds)
                 .pictureId(UserTest.pictureId)
                 .favouriteMovieIds(UserTest.favouriteMovieIds)
                 .viewedMovieIds(UserTest.viewedMovieIds)
@@ -166,10 +160,9 @@ class UserTest {
             String phoneLocal = "1000";
             Role roleLocal = Role.ADMIN;
             String pictureIdLocal = "1000";
-            List<String> ticketIdsLocal = Collections.emptyList();
-            List<String> favouriteMovieIdsLocal = Collections.emptyList();
-            List<String> viewedMovieIdsLocal = Collections.emptyList();
-            List<String> waitMovieIdsLocal = Collections.emptyList();
+            Set<String> favouriteMovieIdsLocal = Collections.emptySet();
+            Set<String> viewedMovieIdsLocal = Collections.emptySet();
+            Set<String> waitMovieIdsLocal = Collections.emptySet();
             List<String> messageIdsLocal = Collections.emptyList();
 
             user = User.builder()
@@ -181,7 +174,6 @@ class UserTest {
                     .email(emailLocal)
                     .phone(phoneLocal)
                     .role(roleLocal)
-                    .ticketIds(ticketIdsLocal)
                     .pictureId(pictureIdLocal)
                     .favouriteMovieIds(favouriteMovieIdsLocal)
                     .viewedMovieIds(viewedMovieIdsLocal)
@@ -197,7 +189,6 @@ class UserTest {
             assertEquals(emailLocal, user.getEmail(), "Email does not match the expected value");
             assertEquals(phoneLocal, user.getPhone(), "Phone does not match the expected value");
             assertEquals(roleLocal, user.getRole(), "Role does not match the expected value");
-            assertEquals(ticketIdsLocal, user.getTicketIds(), "Ticket ids does not match the expected value");
             assertEquals(pictureIdLocal, user.getPictureId(), "Picture id does not match the expected value");
             assertEquals(favouriteMovieIdsLocal, user.getFavouriteMovieIds(), "Favourite movie ids does not match the expected value");
             assertEquals(viewedMovieIdsLocal, user.getViewedMovieIds(), "Viewed movie ids does not match the expected value");
@@ -209,14 +200,11 @@ class UserTest {
         @DisplayName("Test builder defaults to empty collections if no values are added")
         void testBuilderEmptyCollections() {
             user = User.builder().build();
-            List<String> ticketIdsActual = user.getTicketIds();
-            List<String> favouriteMovieIdsActual = user.getFavouriteMovieIds();
-            List<String> viewedMovieIdsActual = user.getViewedMovieIds();
-            List<String> waitMovieIdsActual = user.getWaitMovieIds();
+            Set<String> favouriteMovieIdsActual = user.getFavouriteMovieIds();
+            Set<String> viewedMovieIdsActual = user.getViewedMovieIds();
+            Set<String> waitMovieIdsActual = user.getWaitMovieIds();
             List<String> messageIdsActual = user.getMessageIds();
 
-            assertNotNull(ticketIdsActual, "Ticket ids should not be null");
-            assertTrue(ticketIdsActual.isEmpty(), "Ticket ids should be empty");
             assertNotNull(favouriteMovieIdsActual, "Favourite movies should not be null");
             assertTrue(favouriteMovieIdsActual.isEmpty(), "Favourite movies should be empty");
             assertNotNull(viewedMovieIdsActual, "Viewed movies should not be null");
@@ -230,15 +218,12 @@ class UserTest {
         @Test
         @DisplayName("Test @Singular fields handle multiple values correctly")
         void testSingularFields_whenAdd() {
-            List<String> ticketIdsExpected = List.of("ticket1", "ticket2");
-            List<String> favouriteMovieIdsExpected = List.of("favorite1", "favorite2");
-            List<String> viewedMovieIdsExpected = List.of("viewed1", "viewed2");
-            List<String> waitMovieIdsExpected = List.of("wait1", "wait2");
+            Set<String> favouriteMovieIdsExpected = Set.of("favorite1", "favorite2");
+            Set<String> viewedMovieIdsExpected = Set.of("viewed1", "viewed2");
+            Set<String> waitMovieIdsExpected = Set.of("wait1", "wait2");
             List<String> messageIdsExpected = List.of("message1", "message2");
 
             user = User.builder()
-                    .ticketId("ticket1")
-                    .ticketId("ticket2")
                     .favouriteMovieId("favorite1")
                     .favouriteMovieId("favorite2")
                     .viewedMovieId("viewed1")
@@ -249,7 +234,6 @@ class UserTest {
                     .messageId("message2")
                     .build();
 
-            assertEquals(ticketIdsExpected, user.getTicketIds(), "Ticket ids do not match the expected values");
             assertEquals(favouriteMovieIdsExpected, user.getFavouriteMovieIds(), "Favourite movies do not match the expected values");
             assertEquals(viewedMovieIdsExpected, user.getViewedMovieIds(), "Viewed movies do not match the expected values");
             assertEquals(waitMovieIdsExpected, user.getWaitMovieIds(), "Wait movies do not match the expected values");

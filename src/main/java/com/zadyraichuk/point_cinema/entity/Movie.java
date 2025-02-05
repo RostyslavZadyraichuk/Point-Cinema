@@ -2,6 +2,7 @@ package com.zadyraichuk.point_cinema.entity;
 
 import lombok.*;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.index.CompoundIndex;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
@@ -22,16 +23,18 @@ import java.util.*;
  * <li>{@code @Builder} implements builder pattern.</li>
  * <li>{@code @Indexed} and {@code @CompoundIndex} define fields are indexed in database for quicker search.
  * Key {@code unique = true} means database supports uniqueness of marked fields additionally.</li>
+ * <li>{@code @EqualsAndHashCode} overrides equals and hashCode methods.</li>
  * </ul>
  * </p>
  *
  * @author Rostyslav Zadyraichuk
- * @version 0.2
  */
 @Document(collection = "movie")
 @AllArgsConstructor
 @Getter
 @Builder
+@CompoundIndex(def = "{'name': 1, 'surname': 1}", unique = true)
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class Movie {
 
     /**
@@ -39,22 +42,16 @@ public class Movie {
      */
     @Id
     @Setter
+    @EqualsAndHashCode.Include
     private String id;
 
     /**
-     * The full name of the movie.
-     */
-    @Field(name = "full_name")
-    @Indexed(unique = true)
-    private final String fullName;
-
-    /**
-     * The first name associated with the movie (e.g., director or creator's first name).
+     * The first name associated with the movie.
      */
     private final String name;
 
     /**
-     * The surname associated with the movie (e.g., director or creator's last name).
+     * The surname associated with the movie (e.g. additional name or part of series).
      */
     private final String surname;
 
@@ -127,18 +124,18 @@ public class Movie {
     private final List<String> galleryPictureIds;
 
     /**
-     * A list of identifiers for actors associated with the movie.
+     * A set of identifiers for actors associated with the movie.
      */
     @Field(name = "actor_ids")
     @Singular("actorId")
     @Indexed
-    private final List<String> actorIds;
+    private final Set<String> actorIds;
 
     /**
-     * A list of genres associated with the movie.
+     * A set of genres associated with the movie.
      */
     @Singular("genre")
     @Indexed
-    private final List<Genre> genres;
+    private final Set<Genre> genres;
 
 }

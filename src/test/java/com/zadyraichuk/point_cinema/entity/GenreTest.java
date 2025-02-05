@@ -5,6 +5,8 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
+import java.util.Set;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 @DisplayName("Genre enum tests")
@@ -13,14 +15,14 @@ class GenreTest {
     @Test
     @DisplayName("Test enum values array is valid")
     void testValues() {
-        Genre[] expected = getArrayOfGenres();
-        Genre[] actual = Genre.values();
+        Set<Genre> expected = getSetOfExpectedGenres();
+        Set<Genre> actual = Set.of(Genre.values());
 
         assertNotNull(actual, "Enum cannot be null");
-        assertNotEquals(0, actual.length, "Enum length should not be zero");
-        assertEquals(expected.length, actual.length,
-                String.format("Enum should have %d constants", expected.length));
-        assertArrayEquals(expected, actual,"Enum constants do not match expected values");
+        assertNotEquals(0, actual.size(), "Enum length should not be zero");
+        assertEquals(expected.size(), actual.size(),
+                String.format("Enum should have %d constants", expected.size()));
+        assertTrue(actual.containsAll(expected), "Enum constants do not match expected values");
     }
 
     @Test
@@ -47,8 +49,8 @@ class GenreTest {
                 "Enum should not be returned from invalid value");
     }
 
-    private Genre[] getArrayOfGenres() {
-        return new Genre[]{
+    private Set<Genre> getSetOfExpectedGenres() {
+        return Set.of(
                 Genre.ACTION,
                 Genre.COMEDY,
                 Genre.CARTOON,
@@ -63,6 +65,6 @@ class GenreTest {
                 Genre.THRILLER,
                 Genre.HISTORICAL,
                 Genre.DRAMA
-        };
+        );
     }
 }

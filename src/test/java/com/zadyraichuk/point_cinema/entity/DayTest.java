@@ -5,6 +5,8 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
+import java.util.Set;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 @DisplayName("Day enum tests")
@@ -13,14 +15,14 @@ class DayTest {
     @Test
     @DisplayName("Test enum values array is valid")
     void testValues() {
-        Day[] expected = getArrayOfDays();
-        Day[] actual = Day.values();
+        Set<Day> expected = getSetOfExpectedDays();
+        Set<Day> actual = Set.of(Day.values());
 
         assertNotNull(actual, "Enum cannot be null");
-        assertNotEquals(0, actual.length, "Enum length should not be zero");
-        assertEquals(expected.length, actual.length,
-                String.format("Enum should have %d constants", expected.length));
-        assertArrayEquals(expected, actual,"Enum constants do not match expected values");
+        assertNotEquals(0, actual.size(), "Enum length should not be zero");
+        assertEquals(expected.size(), actual.size(),
+                String.format("Enum should have %d constants", expected.size()));
+        assertTrue(actual.containsAll(expected), "Enum constants do not match expected values");
     }
 
     @Test
@@ -47,8 +49,8 @@ class DayTest {
                 "Enum should not be returned from invalid value");
     }
 
-    private Day[] getArrayOfDays() {
-        return new Day[]{
+    private Set<Day> getSetOfExpectedDays() {
+        return Set.of(
                 Day.MONDAY,
                 Day.TUESDAY,
                 Day.WEDNESDAY,
@@ -56,6 +58,6 @@ class DayTest {
                 Day.FRIDAY,
                 Day.SATURDAY,
                 Day.SUNDAY
-        };
+        );
     }
 }

@@ -5,9 +5,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -15,7 +13,6 @@ import static org.junit.jupiter.api.Assertions.*;
 class MovieTest {
 
     private static String id;
-    private static String fullName;
     private static String name;
     private static String surname;
     private static String description;
@@ -29,15 +26,14 @@ class MovieTest {
     private static String widePictureId;
     private static String posterPictureId;
     private static List<String> galleryPictureIds;
-    private static List<String> actorIds;
-    private static List<Genre> genres;
+    private static Set<String> actorIds;
+    private static Set<Genre> genres;
 
     private Movie movie;
 
     @BeforeAll
     static void beforeAll() {
         MovieTest.id = "1";
-        MovieTest.fullName = "test";
         MovieTest.name = "test";
         MovieTest.surname = "test";
         MovieTest.description = "test";
@@ -51,8 +47,8 @@ class MovieTest {
         MovieTest.widePictureId = "test";
         MovieTest.posterPictureId = "test";
         MovieTest.galleryPictureIds = Collections.emptyList();
-        MovieTest.actorIds = Collections.emptyList();
-        MovieTest.genres = Collections.emptyList();
+        MovieTest.actorIds = Collections.emptySet();
+        MovieTest.genres = Collections.emptySet();
     }
 
     @BeforeEach
@@ -64,7 +60,6 @@ class MovieTest {
     @DisplayName("Test all-args constructor initializes fields correctly")
     void testAllArgsConstructor() {
         String idLocal = "100";
-        String fullNameLocal = "100";
         String nameLocal = "100";
         String surnameLocal = "100";
         String descriptionLocal = "100";
@@ -78,12 +73,11 @@ class MovieTest {
         String widePictureIdLocal = "100";
         String posterPictureIdLocal = "100";
         List<String> galleryPictureIdsLocal = new ArrayList<>(0);
-        List<String> actorIdsLocal = new ArrayList<>(0);
-        List<Genre> genresLocal = new ArrayList<>(0);
+        Set<String> actorIdsLocal = new HashSet<>(0);
+        Set<Genre> genresLocal = new HashSet<>(0);
 
         movie = new Movie(
                 idLocal,
-                fullNameLocal,
                 nameLocal,
                 surnameLocal,
                 descriptionLocal,
@@ -102,7 +96,6 @@ class MovieTest {
         );
 
         assertEquals(idLocal, movie.getId(), "Id does not match the expected value");
-        assertEquals(fullNameLocal, movie.getFullName(), "Full name does not match the expected value");
         assertEquals(nameLocal, movie.getName(), "Name does not match the expected value");
         assertEquals(surnameLocal, movie.getSurname(), "Surname does not match the expected value");
         assertEquals(descriptionLocal, movie.getDescription(), "Description does not match the expected value");
@@ -133,7 +126,6 @@ class MovieTest {
     @DisplayName("Test getter methods for all fields")
     void testGetterMethods() {
         assertEquals(MovieTest.id, movie.getId(), "Getter for id returned an unexpected value");
-        assertEquals(MovieTest.fullName, movie.getFullName(), "Full name does not match the expected value");
         assertEquals(MovieTest.name, movie.getName(), "Name does not match the expected value");
         assertEquals(MovieTest.surname, movie.getSurname(), "Surname does not match the expected value");
         assertEquals(MovieTest.description, movie.getDescription(), "Description does not match the expected value");
@@ -154,7 +146,6 @@ class MovieTest {
     private Movie initMovie() {
         return Movie.builder()
                 .id(MovieTest.id)
-                .fullName(MovieTest.fullName)
                 .name(MovieTest.name)
                 .surname(MovieTest.surname)
                 .description(MovieTest.description)
@@ -181,7 +172,6 @@ class MovieTest {
         @DisplayName("Test builder initializes fields correctly")
         void testBuilderInitialization() {
             String idLocal = "1000";
-            String fullNameLocal = "1000";
             String nameLocal = "1000";
             String surnameLocal = "1000";
             String descriptionLocal = "1000";
@@ -195,12 +185,11 @@ class MovieTest {
             String widePictureIdLocal = "1000";
             String posterPictureIdLocal = "1000";
             List<String> galleryPictureIdsLocal = new ArrayList<>(0);
-            List<String> actorIdsLocal = new ArrayList<>(0);
-            List<Genre> genresLocal = new ArrayList<>(0);
+            Set<String> actorIdsLocal = new HashSet<>(0);
+            Set<Genre> genresLocal = new HashSet<>(0);
 
             movie = Movie.builder()
                     .id(idLocal)
-                    .fullName(fullNameLocal)
                     .name(nameLocal)
                     .surname(surnameLocal)
                     .description(descriptionLocal)
@@ -219,7 +208,6 @@ class MovieTest {
                     .build();
 
             assertEquals(idLocal, movie.getId(), "Id does not match the expected value");
-            assertEquals(fullNameLocal, movie.getFullName(), "Full name does not match the expected value");
             assertEquals(nameLocal, movie.getName(), "Name does not match the expected value");
             assertEquals(surnameLocal, movie.getSurname(), "Surname does not match the expected value");
             assertEquals(descriptionLocal, movie.getDescription(), "Description does not match the expected value");
@@ -242,8 +230,8 @@ class MovieTest {
         void testBuilderEmptyCollections() {
             Movie actual = Movie.builder().build();
             List<String> galleryPictureIdsActual = actual.getGalleryPictureIds();
-            List<String> actorIdsActual = actual.getActorIds();
-            List<Genre> genresActual = actual.getGenres();
+            Set<String> actorIdsActual = actual.getActorIds();
+            Set<Genre> genresActual = actual.getGenres();
 
             assertNotNull(galleryPictureIdsActual, "Gallery picture ids should not be null");
             assertTrue(galleryPictureIdsActual.isEmpty(), "Gallery picture ids should be empty");
@@ -257,8 +245,8 @@ class MovieTest {
         @DisplayName("Test @Singular fields handle multiple values correctly")
         void testSingularFields_whenAdd() {
             List<String> galleryPictureIdsExpected = List.of("gallery1", "gallery2");
-            List<String> actorIdsExpected = List.of("actor1", "actor2");
-            List<Genre> genresExpected = List.of(Genre.ADVENTURE, Genre.DETECTIVE);
+            Set<String> actorIdsExpected = Set.of("actor1", "actor2");
+            Set<Genre> genresExpected = Set.of(Genre.ADVENTURE, Genre.DETECTIVE);
 
             Movie actual = Movie.builder()
                     .galleryPictureId("gallery1")
