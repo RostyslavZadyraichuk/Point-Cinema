@@ -1,0 +1,114 @@
+package com.zadyraichuk.point_cinema.dto.identified;
+
+import jakarta.validation.ConstraintViolation;
+import jakarta.validation.Validation;
+import jakarta.validation.Validator;
+import jakarta.validation.ValidatorFactory;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
+
+import java.util.Arrays;
+import java.util.Set;
+import java.util.stream.Stream;
+
+import static org.junit.jupiter.api.Assertions.*;
+
+@DisplayName("Identified actor data transfer object class tests")
+class IdentifiedPictureDTOTest {
+
+    private static String id;
+    private static byte[] pictureData;
+    private static String format;
+    private static Validator validator;
+
+    @BeforeAll
+    static void setupValidator() {
+        id = "1";
+        pictureData = new byte[]{1, 2, 3};
+        format = "png";
+
+        ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
+        validator = factory.getValidator();
+        factory.close();
+    }
+
+    @Test
+    @DisplayName("Test all-args constructor")
+    void testAllArgsConstructor() {
+        String idLocal = "10";
+        byte[] pictureDataLocal = new byte[10];
+        Arrays.fill(pictureDataLocal, (byte) 15);
+        String formatLocal = "png";
+
+        IdentifiedPictureDTO picture = new IdentifiedPictureDTO(idLocal, pictureDataLocal, formatLocal);
+
+        assertEquals(idLocal, picture.getId(), "Id does not match the expected value");
+        assertEquals(pictureDataLocal, picture.getPictureData(), "Picture data does not match the expected value");
+        assertEquals(formatLocal, picture.getFormat(), "Format does not match the expected value");
+    }
+
+    @Test
+    @DisplayName("Test getter methods for all fields")
+    void testGetterMethods() {
+        IdentifiedPictureDTO picture = new IdentifiedPictureDTO(id, pictureData, format);
+
+        assertEquals(id, picture.getId(), "Getter for Id returned an unexpected value");
+        assertEquals(pictureData, picture.getPictureData(), "Getter for Picture data returned an unexpected value");
+        assertEquals(format, picture.getFormat(), "Getter for Format returned an unexpected value");
+    }
+
+
+    @Test
+    @DisplayName("Test equals and hashCode methods")
+    void testEqualsAndHashCode() {
+        IdentifiedPictureDTO picture1 = new IdentifiedPictureDTO(id, pictureData, format);
+        IdentifiedPictureDTO picture2 = new IdentifiedPictureDTO(id, pictureData, format);
+        IdentifiedPictureDTO picture3 = new IdentifiedPictureDTO(id, new byte[]{1, 2}, "test");
+
+        assertEquals(picture1, picture2, "Equals method returned false");
+        assertEquals(picture2, picture1, "Equals method returned false");
+        assertEquals(picture1, picture3, "Equals method returned false");
+
+        assertEquals(picture1.hashCode(), picture2.hashCode(), "hashCode method returned different values");
+        assertEquals(picture1.hashCode(), picture3.hashCode(), "hashCode method returned different values");
+    }
+
+    @ParameterizedTest
+    @MethodSource("provideDataForIdValidationTest")
+    @DisplayName("Test id field validation")
+    void testIdValidation(String id, int expectedViolations) {
+        IdentifiedPictureDTO pictureDTO = new IdentifiedPictureDTO(id, new byte[]{1, 2, 3}, "png");
+        Set<ConstraintViolation<IdentifiedPictureDTO>> violations = validator.validate(pictureDTO);
+
+        assertEquals(violations.size(), expectedViolations, "Wrong number of violations");
+        if (expectedViolations != 0) {
+            assertEquals("Id cannot be null, empty or blank", violations.iterator().next().getMessage(),
+                    "Wrong error message");
+        }
+    }
+
+    /**
+     * Provides arguments for testing the testIdValidation.
+     * The arguments are:
+     * <ul>
+     *     <li>id - string with picture identifier</li>
+     *     <li>expectedViolations - the expected number of violations</li>
+     * </ul>
+     *
+     * @return a stream of arguments for parameterized tests
+     */
+    private static Stream<Arguments> provideDataForIdValidationTest() {
+        return Stream.of(
+                Arguments.of(null, 1),
+                Arguments.of("", 1),
+                Arguments.of("  ", 1),
+                Arguments.of("1", 0),
+                Arguments.of(" 1  ", 0)
+        );
+    }
+
+}
