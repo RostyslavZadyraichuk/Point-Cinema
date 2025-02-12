@@ -12,6 +12,8 @@ import lombok.*;
  * <ul>
  * <li>{@code @Getter} generates getters for all fields.</li>
  * <li>{@code @AllArgsConstructor} generates a constructor for all fields.</li>
+ * <li>{@code @EqualsAndHashCode} overrides equals and hashCode methods.}</li>
+ * <li>{@code @With} is used to make defensive copying of the {@link PictureDTO} object.</li>
  * </ul>
  * </p>
  *
@@ -19,6 +21,7 @@ import lombok.*;
  */
 @Getter
 @AllArgsConstructor
+@EqualsAndHashCode
 public class ActorDTO {
 
     /**
@@ -37,6 +40,8 @@ public class ActorDTO {
      * The picture of the actor.
      * Picture can be null - then default picture will be used.
      */
+    @With
+    @EqualsAndHashCode.Exclude
     private final PictureDTO picture;
 
 }

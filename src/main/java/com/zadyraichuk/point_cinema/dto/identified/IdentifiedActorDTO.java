@@ -21,20 +21,20 @@ import lombok.*;
  */
 @Getter
 @EqualsAndHashCode(onlyExplicitlyIncluded = true, callSuper = false)
-public class IdentitfiedActorDTO extends ActorDTO {
+public class IdentifiedActorDTO extends ActorDTO {
 
     /**
-     * Creates a new instance of {@link IdentitfiedActorDTO} with provided parameters.
+     * Creates a new instance of {@link IdentifiedActorDTO} with provided parameters.
      *
      * @param id        the identifier of the actor
      * @param firstName the first name of the actor
      * @param lastName  the last name of the actor
      * @param picture   the picture of the actor
      */
-    public IdentitfiedActorDTO(String id,
-                               String firstName,
-                               String lastName,
-                               PictureDTO picture) {
+    public IdentifiedActorDTO(String id,
+                              String firstName,
+                              String lastName,
+                              PictureDTO picture) {
         super(firstName, lastName, picture);
         this.id = id;
     }

@@ -8,29 +8,34 @@ import jakarta.validation.ValidatorFactory;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Set;
 import java.util.stream.Stream;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
 
 @DisplayName("Actor data transfer object class tests")
+@ExtendWith(MockitoExtension.class)
 class ActorDTOTest {
 
     private static String firstName;
     private static String lastName;
+    @Mock
     private static PictureDTO picture;
+
     private static Validator validator;
 
     @BeforeAll
     static void setupValidator() {
         firstName = "test";
         lastName = "test";
-        picture = Mockito.mock(PictureDTO.class);
 
         ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
         validator = factory.getValidator();
@@ -59,6 +64,27 @@ class ActorDTOTest {
         assertEquals(firstName, actor.getFirstName(), "Getter for First name returned an unexpected value");
         assertEquals(lastName, actor.getLastName(), "Getter for Last name returned an unexpected value");
         assertEquals(picture, actor.getPicture(), "Getter for Picture returned an unexpected value");
+    }
+
+    @DisplayName("Test equals and hashCode methods")
+    @ParameterizedTest
+    @MethodSource("provideDataForEqualsAndHashCodeTest")
+    void testEqualsAndHashCode(ActorDTO actor1, ActorDTO actor2, boolean expectedResult) {
+        assertEquals(expectedResult, actor1.equals(actor2), "Equals method returned false");
+        assertEquals(expectedResult, actor1.hashCode() == actor2.hashCode(),
+                "hashCode method returned different values");
+    }
+
+    @Test
+    @DisplayName("Test with method for updating picture")
+    void testWith() {
+        ActorDTO actor = new ActorDTO(firstName, lastName, picture);
+        PictureDTO localPicture = Mockito.mock(PictureDTO.class);
+        ActorDTO actorUpdated = actor.withPicture(localPicture);
+
+        assertEquals(localPicture, actorUpdated.getPicture(), "Picture does not match the expected value");
+        assertNotEquals(localPicture, actor.getPicture(), "Picture match the unexpected value");
+        assertNotEquals(actor.getPicture(), actorUpdated.getPicture(), "Picture was not updated");
     }
 
     @ParameterizedTest
@@ -97,6 +123,33 @@ class ActorDTOTest {
         Set<ConstraintViolation<ActorDTO>> violations = validator.validate(actorDTO);
 
         assertEquals(violations.size(), expectedViolations, "Wrong number of violations");
+    }
+
+    /**
+     * Provides arguments for testing the testEqualsAndHashCode.
+     * The arguments are:
+     * <ul>
+     *     <li>actor1 - the first actor</li>
+     *     <li>actor2 - the second actor</li>
+     *     <li>expectedResult - the expected result of equals method</li>
+     * </ul>
+     *
+     * @return a stream of arguments for parameterized tests
+     */
+    private static Stream<Arguments> provideDataForEqualsAndHashCodeTest() {
+        ActorDTO actor1 = new ActorDTO(firstName, lastName, picture);
+        ActorDTO actor2 = new ActorDTO(firstName, lastName, picture);
+        ActorDTO actor3 = new ActorDTO(firstName, lastName, null);
+        ActorDTO actor4 = new ActorDTO(firstName, "equalsHashCode", picture);
+        ActorDTO actor5 = new ActorDTO("equalsHashCode", lastName, picture);
+
+        return Stream.of(
+                Arguments.of(actor1, actor2, true),
+                Arguments.of(actor2, actor1, true),
+                Arguments.of(actor1, actor3, true),
+                Arguments.of(actor1, actor4, false),
+                Arguments.of(actor1, actor5, false)
+        );
     }
 
     /**

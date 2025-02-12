@@ -23,6 +23,7 @@ class IdentifiedPictureDTOTest {
     private static String id;
     private static byte[] pictureData;
     private static String format;
+
     private static Validator validator;
 
     @BeforeAll
@@ -61,20 +62,13 @@ class IdentifiedPictureDTOTest {
         assertEquals(format, picture.getFormat(), "Getter for Format returned an unexpected value");
     }
 
-
-    @Test
     @DisplayName("Test equals and hashCode methods")
-    void testEqualsAndHashCode() {
-        IdentifiedPictureDTO picture1 = new IdentifiedPictureDTO(id, pictureData, format);
-        IdentifiedPictureDTO picture2 = new IdentifiedPictureDTO(id, pictureData, format);
-        IdentifiedPictureDTO picture3 = new IdentifiedPictureDTO(id, new byte[]{1, 2}, "test");
-
-        assertEquals(picture1, picture2, "Equals method returned false");
-        assertEquals(picture2, picture1, "Equals method returned false");
-        assertEquals(picture1, picture3, "Equals method returned false");
-
-        assertEquals(picture1.hashCode(), picture2.hashCode(), "hashCode method returned different values");
-        assertEquals(picture1.hashCode(), picture3.hashCode(), "hashCode method returned different values");
+    @ParameterizedTest
+    @MethodSource("provideDataForEqualsAndHashCodeTest")
+    void testEqualsAndHashCode(IdentifiedPictureDTO picture1, IdentifiedPictureDTO picture2, boolean expectedResult) {
+        assertEquals(expectedResult, picture1.equals(picture2), "Equals method returned false");
+        assertEquals(expectedResult, picture1.hashCode() == picture2.hashCode(),
+                "hashCode method returned different values");
     }
 
     @ParameterizedTest
@@ -89,6 +83,29 @@ class IdentifiedPictureDTOTest {
             assertEquals("Id cannot be null, empty or blank", violations.iterator().next().getMessage(),
                     "Wrong error message");
         }
+    }
+
+    /**
+     * Provides arguments for testing the testEqualsAndHashCode.
+     * The arguments are:
+     * <ul>
+     *     <li>picture1 - the first picture</li>
+     *     <li>picture2 - the second picture</li>
+     *     <li>expectedResult - the expected result of equals method</li>
+     * </ul>
+     *
+     * @return a stream of arguments for parameterized tests
+     */
+    private static Stream<Arguments> provideDataForEqualsAndHashCodeTest() {
+        IdentifiedPictureDTO picture1 = new IdentifiedPictureDTO(id, pictureData, format);
+        IdentifiedPictureDTO picture2 = new IdentifiedPictureDTO(id, pictureData, format);
+        IdentifiedPictureDTO picture3 = new IdentifiedPictureDTO(id, new byte[]{1, 1}, "equalsHashCode");
+
+        return Stream.of(
+                Arguments.of(picture1, picture2, true),
+                Arguments.of(picture2, picture1, true),
+                Arguments.of(picture1, picture3, true)
+        );
     }
 
     /**

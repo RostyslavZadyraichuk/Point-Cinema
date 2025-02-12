@@ -15,13 +15,14 @@ import java.util.Arrays;
 import java.util.Set;
 import java.util.stream.Stream;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
 
 @DisplayName("Picture data transfer object class tests")
 class PictureDTOTest {
 
     private static byte[] pictureData;
     private static String format;
+
     private static Validator validator;
 
     @BeforeAll
@@ -56,6 +57,15 @@ class PictureDTOTest {
         assertEquals(format, picture.getFormat(), "Getter for Format returned an unexpected value");
     }
 
+    @DisplayName("Test equals and hashCode methods")
+    @ParameterizedTest
+    @MethodSource("provideDataForEqualsAndHashCodeTest")
+    void testEqualsAndHashCode(PictureDTO picture1, PictureDTO picture2, boolean expectedResult) {
+        assertEquals(expectedResult, picture1.equals(picture2), "Equals method returned false");
+        assertEquals(expectedResult, picture1.hashCode() == picture2.hashCode(),
+                "hashCode method returned different values");
+    }
+
     @ParameterizedTest
     @MethodSource("provideDataForPictureDataValidationTest")
     @DisplayName("Test picture data field validation")
@@ -82,6 +92,31 @@ class PictureDTOTest {
             assertEquals("Format cannot be empty", violations.iterator().next().getMessage(),
                     "Wrong error message");
         }
+    }
+
+    /**
+     * Provides arguments for testing the testEqualsAndHashCode.
+     * The arguments are:
+     * <ul>
+     *     <li>picture1 - the first picture</li>
+     *     <li>picture2 - the second picture</li>
+     *     <li>expectedResult - the expected result of equals method</li>
+     * </ul>
+     *
+     * @return a stream of arguments for parameterized tests
+     */
+    private static Stream<Arguments> provideDataForEqualsAndHashCodeTest() {
+        PictureDTO picture1 = new PictureDTO(pictureData, format);
+        PictureDTO picture2 = new PictureDTO(pictureData, format);
+        PictureDTO picture3 = new PictureDTO(pictureData, "equalsHashCode");
+        PictureDTO picture4 = new PictureDTO(new byte[]{1, 1}, format);
+
+        return Stream.of(
+                Arguments.of(picture1, picture2, true),
+                Arguments.of(picture2, picture1, true),
+                Arguments.of(picture1, picture3, false),
+                Arguments.of(picture1, picture4, false)
+        );
     }
 
     /**

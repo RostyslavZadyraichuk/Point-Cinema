@@ -13,6 +13,7 @@ import lombok.*;
  * <ul>
  * <li>{@code @Getter} generates getters for all fields.</li>
  * <li>{@code @AllArgsConstructor} generates a constructor for all fields.</li>
+ * <li>{@code @EqualsAndHashCode} overrides equals and hashCode methods.}</li>
  * </ul>
  * </p>
  *
@@ -20,6 +21,7 @@ import lombok.*;
  */
 @Getter
 @AllArgsConstructor
+@EqualsAndHashCode
 public class PictureDTO {
 
     /**
