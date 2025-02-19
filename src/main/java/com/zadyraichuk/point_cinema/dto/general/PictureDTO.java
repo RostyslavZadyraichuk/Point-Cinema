@@ -6,7 +6,7 @@ import lombok.*;
 
 /**
  * Represents general picture data transfer object without identifier.
- * This class is used to create picture requests.
+ * This class is used for create picture requests.
  *
  * <p>
  * This class uses Lombok annotations to reduce boilerplate code:

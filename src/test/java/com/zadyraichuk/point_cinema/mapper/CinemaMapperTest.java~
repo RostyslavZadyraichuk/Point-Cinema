@@ -1,10 +1,10 @@
 package com.zadyraichuk.point_cinema.mapper;
 
-import com.zadyraichuk.point_cinema.dto.general.ActorDTO;
+import com.zadyraichuk.point_cinema.dto.general.CinemaDTO;
 import com.zadyraichuk.point_cinema.dto.general.PictureDTO;
-import com.zadyraichuk.point_cinema.dto.identified.IdentifiedActorDTO;
+import com.zadyraichuk.point_cinema.dto.identified.IdentifiedCinemaDTO;
 import com.zadyraichuk.point_cinema.dto.identified.IdentifiedPictureDTO;
-import com.zadyraichuk.point_cinema.entity.Actor;
+import com.zadyraichuk.point_cinema.entity.Cinema;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -20,22 +20,21 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 
 @SpringBootTest
 @ActiveProfiles("test")
-@DisplayName("Actor mapper class tests")
-@ExtendWith(MockitoExtension.class)
-class ActorMapperTest {
+@DisplayName("Cinema mapper class tests")
+class CinemaMapperTest {
 
     @Autowired
-    private ActorMapper mapper;
+    private CinemaMapper mapper;
 
     private static PictureDTO pictureDTO;
     private static IdentifiedPictureDTO identifiedPictureDTO;
 
-    private static Actor entity;
-    private static ActorDTO dto;
-    private static IdentifiedActorDTO identifiedDto;
+    private static Cinema entity;
+    private static CinemaDTO dto;
+    private static IdentifiedCinemaDTO identifiedDto;
 
     @BeforeAll
-    static void setupClass() {
+    static void setUp() {
         String id = "test";
         String firstName = "test";
         String lastName = "test";
@@ -45,25 +44,25 @@ class ActorMapperTest {
         identifiedPictureDTO = Mockito.mock(IdentifiedPictureDTO.class);
         Mockito.when(identifiedPictureDTO.getId()).thenReturn(pictureId);
 
-        entity = new Actor(firstName, lastName, pictureId);
-        dto = new ActorDTO(firstName, lastName, pictureDTO);
-        identifiedDto = new IdentifiedActorDTO(id, firstName, lastName, identifiedPictureDTO);
+        entity = new Cinema(firstName, lastName, pictureId);
+        dto = new CinemaDTO(firstName, lastName, pictureDTO);
+        identifiedDto = new IdentifiedCinemaDTO(id, firstName, lastName, identifiedPictureDTO);
     }
 
-    @DisplayName("Test converting Actor to ActorDTO")
+    @DisplayName("Test converting Cinema to CinemaDTO")
     @Test
     void fromEntityToDTOTest() {
-        ActorDTO dtoLocal = mapper.toDTO(entity, pictureDTO);
+        CinemaDTO dtoLocal = mapper.toDTO(entity, pictureDTO);
 
         assertNull(entity.getId(), "Id are not null");
         assertEquals(entity.getFirstName(), dtoLocal.getFirstName(), "First names are not equal");
         assertEquals(entity.getLastName(), dtoLocal.getLastName(), "Last names are not equal");
     }
 
-    @DisplayName("Test converting Actor to IdentifiedActorDTO")
+    @DisplayName("Test converting Cinema to IdentifiedCinemaDTO")
     @Test
     void fromEntityToIdentifiedDTOTest() {
-        IdentifiedActorDTO dtoLocal = mapper.toIdentifiedDTO(entity, identifiedPictureDTO);
+        IdentifiedCinemaDTO dtoLocal = mapper.toIdentifiedDTO(entity, identifiedPictureDTO);
 
         assertEquals(entity.getId(), dtoLocal.getId(), "Ids are not equal");
         assertEquals(entity.getFirstName(), dtoLocal.getFirstName(), "First names are not equal");
@@ -72,10 +71,10 @@ class ActorMapperTest {
                 "Picture IDs are not equal");
     }
 
-    @DisplayName("Test converting ActorDTO to Actor")
+    @DisplayName("Test converting CinemaDTO to Cinema")
     @Test
     void fromDTOtoEntityTest() {
-        Actor entityLocal = mapper.toEntity(dto);
+        Cinema entityLocal = mapper.toEntity(dto);
 
         assertNull(entityLocal.getId(), "Id are not null");
         assertEquals(dto.getFirstName(), entityLocal.getFirstName(), "First names are not equal");
@@ -83,10 +82,10 @@ class ActorMapperTest {
         assertNull(entityLocal.getPictureId(), "Picture Id are not null");
     }
 
-    @DisplayName("Test converting IdentifiedActorDTO to Actor")
+    @DisplayName("Test converting IdentifiedCinemaDTO to Cinema")
     @Test
     void fromIdentifiedDTOtoEntityTest() {
-        Actor entityLocal = mapper.toEntity(identifiedDto);
+        Cinema entityLocal = mapper.toEntity(identifiedDto);
 
         assertEquals(identifiedDto.getId(), entityLocal.getId(), "Ids are not equal");
         assertEquals(identifiedDto.getFirstName(), entityLocal.getFirstName(), "First names are not equal");

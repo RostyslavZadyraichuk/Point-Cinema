@@ -26,7 +26,7 @@ class PictureDTOTest {
     private static Validator validator;
 
     @BeforeAll
-    static void setupValidator() {
+    static void setupClass() {
         pictureData = new byte[]{1, 2, 3};
         format = "png";
 

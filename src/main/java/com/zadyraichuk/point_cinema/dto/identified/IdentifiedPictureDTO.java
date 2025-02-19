@@ -6,7 +6,7 @@ import lombok.*;
 
 /**
  * Represents a picture data transfer object with identifier.
- * This class is used to obtain, update and delete picture requests.
+ * This class is used for obtain, update and delete picture requests.
  *
  * <p>
  * This class uses Lombok annotations to reduce boilerplate code:
@@ -23,6 +23,13 @@ import lombok.*;
 public class IdentifiedPictureDTO extends PictureDTO {
 
     /**
+     * The id of the picture.
+     */
+    @EqualsAndHashCode.Include
+    @NotBlank(message = "Id cannot be null, empty or blank")
+    private final String id;
+
+    /**
      * Constructs a new {@code IdentifiedPictureDTO} with the given parameters.
      *
      * @param id          the id of the picture
@@ -33,12 +40,5 @@ public class IdentifiedPictureDTO extends PictureDTO {
         super(pictureData, format);
         this.id = id;
     }
-
-    /**
-     * The id of the picture.
-     */
-    @EqualsAndHashCode.Include
-    @NotBlank(message = "Id cannot be null, empty or blank")
-    private final String id;
 
 }

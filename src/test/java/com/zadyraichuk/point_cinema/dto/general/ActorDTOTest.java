@@ -33,7 +33,7 @@ class ActorDTOTest {
     private static Validator validator;
 
     @BeforeAll
-    static void setupValidator() {
+    static void setupClass() {
         firstName = "test";
         lastName = "test";
 

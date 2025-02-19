@@ -21,7 +21,7 @@ import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-@DisplayName("Identified picture data transfer object class tests")
+@DisplayName("Identified actor data transfer object class tests")
 @ExtendWith(MockitoExtension.class)
 class IdentifiedActorDTOTest {
 

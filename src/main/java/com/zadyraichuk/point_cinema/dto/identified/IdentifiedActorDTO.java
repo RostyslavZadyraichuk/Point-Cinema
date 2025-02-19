@@ -7,7 +7,7 @@ import lombok.*;
 
 /**
  * Represents an actor data transfer object with identifier.
- * This class is used to obtain, update and delete actor requests.
+ * This class is used for obtain, update and delete actor requests.
  *
  * <p>
  * This class uses Lombok annotations to reduce boilerplate code:
@@ -24,6 +24,13 @@ import lombok.*;
 public class IdentifiedActorDTO extends ActorDTO {
 
     /**
+     * The identifier of the actor.
+     */
+    @EqualsAndHashCode.Include
+    @NotBlank(message = "Id cannot be null, empty or blank")
+    private final String id;
+
+    /**
      * Creates a new instance of {@link IdentifiedActorDTO} with provided parameters.
      *
      * @param id        the identifier of the actor
@@ -38,12 +45,5 @@ public class IdentifiedActorDTO extends ActorDTO {
         super(firstName, lastName, picture);
         this.id = id;
     }
-
-    /**
-     * The identifier of the actor.
-     */
-    @EqualsAndHashCode.Include
-    @NotBlank(message = "Id cannot be null, empty or blank")
-    private final String id;
 
 }

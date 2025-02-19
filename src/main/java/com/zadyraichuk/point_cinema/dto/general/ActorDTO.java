@@ -5,7 +5,7 @@ import lombok.*;
 
 /**
  * Represents an actor data transfer object without identifier.
- * This class is used to create actor requests.
+ * This class is used for create actor requests.
  *
  * <p>
  * This class uses Lombok annotations to reduce boilerplate code:
