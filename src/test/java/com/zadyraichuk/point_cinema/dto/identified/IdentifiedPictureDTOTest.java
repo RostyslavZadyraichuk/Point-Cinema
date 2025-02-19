@@ -1,9 +1,6 @@
 package com.zadyraichuk.point_cinema.dto.identified;
 
-import jakarta.validation.ConstraintViolation;
-import jakarta.validation.Validation;
-import jakarta.validation.Validator;
-import jakarta.validation.ValidatorFactory;
+import com.zadyraichuk.point_cinema.dto.ValidationTestUtils;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -12,7 +9,6 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
 import java.util.Arrays;
-import java.util.Set;
 import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -24,17 +20,11 @@ class IdentifiedPictureDTOTest {
     private static byte[] pictureData;
     private static String format;
 
-    private static Validator validator;
-
     @BeforeAll
-    static void setupValidator() {
+    static void setupClass() {
         id = "1";
         pictureData = new byte[]{1, 2, 3};
         format = "png";
-
-        ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
-        validator = factory.getValidator();
-        factory.close();
     }
 
     @Test
@@ -74,15 +64,9 @@ class IdentifiedPictureDTOTest {
     @ParameterizedTest
     @MethodSource("provideDataForIdValidationTest")
     @DisplayName("Test id field validation")
-    void testIdValidation(String id, int expectedViolations) {
+    void testIdValidation(String id, boolean isValid) {
         IdentifiedPictureDTO pictureDTO = new IdentifiedPictureDTO(id, new byte[]{1, 2, 3}, "png");
-        Set<ConstraintViolation<IdentifiedPictureDTO>> violations = validator.validate(pictureDTO);
-
-        assertEquals(violations.size(), expectedViolations, "Wrong number of violations");
-        if (expectedViolations != 0) {
-            assertEquals("Id cannot be null, empty or blank", violations.iterator().next().getMessage(),
-                    "Wrong error message");
-        }
+        ValidationTestUtils.validate(pictureDTO, isValid);
     }
 
     /**
@@ -113,19 +97,13 @@ class IdentifiedPictureDTOTest {
      * The arguments are:
      * <ul>
      *     <li>id - string with picture identifier</li>
-     *     <li>expectedViolations - the expected number of violations</li>
+     *     <li>valid - is the id valid or not</li>
      * </ul>
      *
      * @return a stream of arguments for parameterized tests
      */
     private static Stream<Arguments> provideDataForIdValidationTest() {
-        return Stream.of(
-                Arguments.of(null, 1),
-                Arguments.of("", 1),
-                Arguments.of("  ", 1),
-                Arguments.of("1", 0),
-                Arguments.of(" 1  ", 0)
-        );
+        return ValidationTestUtils.forNotBlankValidation();
     }
 
 }

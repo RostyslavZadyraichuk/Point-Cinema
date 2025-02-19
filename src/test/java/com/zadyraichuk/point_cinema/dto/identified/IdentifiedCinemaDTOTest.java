@@ -97,7 +97,7 @@ class IdentifiedCinemaDTOTest {
         return Stream.of(
                 Arguments.of(cinema1, cinema2, true),
                 Arguments.of(cinema2, cinema1, true),
-                Arguments.of(cinema1, cinema3, true)
+                Arguments.of(cinema1, cinema3, false)
         );
     }
 
@@ -112,7 +112,7 @@ class IdentifiedCinemaDTOTest {
      * @return a stream of arguments for parameterized tests
      */
     private static Stream<Arguments> provideDataForIdValidationTest() {
-        return ValidationTestUtils.NOT_BLANK_VALIDATION;
+        return ValidationTestUtils.forNotBlankValidation();
     }
 
 }

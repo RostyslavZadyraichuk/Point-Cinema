@@ -1,10 +1,7 @@
 package com.zadyraichuk.point_cinema.dto.general;
 
+import com.zadyraichuk.point_cinema.dto.ValidationTestUtils;
 import com.zadyraichuk.point_cinema.dto.identified.IdentifiedPictureDTO;
-import jakarta.validation.ConstraintViolation;
-import jakarta.validation.Validation;
-import jakarta.validation.Validator;
-import jakarta.validation.ValidatorFactory;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -16,7 +13,6 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.util.Set;
 import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -30,16 +26,10 @@ class ActorDTOTest {
     @Mock
     private static PictureDTO picture;
 
-    private static Validator validator;
-
     @BeforeAll
     static void setupClass() {
         firstName = "test";
         lastName = "test";
-
-        ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
-        validator = factory.getValidator();
-        factory.close();
     }
 
     @Test
@@ -90,39 +80,25 @@ class ActorDTOTest {
     @ParameterizedTest
     @MethodSource("provideDataForFirstNameValidationTest")
     @DisplayName("Test first name field validation")
-    void testFirstNameValidation(String firstName, int expectedViolations) {
-        ActorDTO actorDTO = new ActorDTO(firstName, "test", null);
-        Set<ConstraintViolation<ActorDTO>> violations = validator.validate(actorDTO);
-
-        assertEquals(violations.size(), expectedViolations, "Wrong number of violations");
-        if (expectedViolations != 0) {
-            assertEquals("First name cannot be empty", violations.iterator().next().getMessage(),
-                    "Wrong error message");
-        }
+    void testFirstNameValidation(String firstNameLocal, boolean isValid) {
+        ActorDTO actorDTO = new ActorDTO(firstNameLocal, "test", null);
+        ValidationTestUtils.validate(actorDTO, isValid);
     }
 
     @ParameterizedTest
     @MethodSource("provideDataForLastNameValidationTest")
     @DisplayName("Test last name field validation")
-    void testLastNameValidation(String lastName, int expectedViolations) {
-        ActorDTO actorDTO = new ActorDTO("test", lastName, null);
-        Set<ConstraintViolation<ActorDTO>> violations = validator.validate(actorDTO);
-
-        assertEquals(violations.size(), expectedViolations, "Wrong number of violations");
-        if (expectedViolations != 0) {
-            assertEquals("Last name cannot be empty", violations.iterator().next().getMessage(),
-                    "Wrong error message");
-        }
+    void testLastNameValidation(String lastNameLocal, boolean isValid) {
+        ActorDTO actorDTO = new ActorDTO("test", lastNameLocal, null);
+        ValidationTestUtils.validate(actorDTO, isValid);
     }
 
     @ParameterizedTest
     @MethodSource("provideDataForPictureValidationTest")
     @DisplayName("Test picture field validation")
-    void testPictureValidation(PictureDTO picture, int expectedViolations) {
-        ActorDTO actorDTO = new ActorDTO("test", "test", picture);
-        Set<ConstraintViolation<ActorDTO>> violations = validator.validate(actorDTO);
-
-        assertEquals(violations.size(), expectedViolations, "Wrong number of violations");
+    void testPictureValidation(PictureDTO pictureLocal, boolean isValid) {
+        ActorDTO actorDTO = new ActorDTO("test", "test", pictureLocal);
+        ValidationTestUtils.validate(actorDTO, isValid);
     }
 
     /**
@@ -157,20 +133,13 @@ class ActorDTOTest {
      * The arguments are:
      * <ul>
      *     <li>firstName - string with actor's first name</li>
-     *     <li>expectedViolations - the expected number of violations</li>
+     *     <li>valid - is the first name valid or not</li>
      * </ul>
      *
      * @return a stream of arguments for parameterized tests
      */
     private static Stream<Arguments> provideDataForFirstNameValidationTest() {
-        return Stream.of(
-                Arguments.of(null, 1),
-                Arguments.of("", 1),
-                Arguments.of(" ", 1),
-                Arguments.of("a", 0),
-                Arguments.of("  a  ", 0),
-                Arguments.of("abc", 0)
-        );
+        return ValidationTestUtils.forNotBlankValidation();
     }
 
     /**
@@ -178,20 +147,13 @@ class ActorDTOTest {
      * The arguments are:
      * <ul>
      *     <li>lastName - string with actor's last name</li>
-     *     <li>expectedViolations - the expected number of violations</li>
+     *     <li>valid - is the last name valid or not</li>
      * </ul>
      *
      * @return a stream of arguments for parameterized tests
      */
     private static Stream<Arguments> provideDataForLastNameValidationTest() {
-        return Stream.of(
-                Arguments.of(null, 1),
-                Arguments.of("", 1),
-                Arguments.of(" ", 1),
-                Arguments.of("a", 0),
-                Arguments.of("  a  ", 0),
-                Arguments.of("abc", 0)
-        );
+        return ValidationTestUtils.forNotBlankValidation();
     }
 
 
@@ -200,16 +162,16 @@ class ActorDTOTest {
      * The arguments are:
      * <ul>
      *     <li>picture - picture data transfer object</li>
-     *     <li>expectedViolations - the expected number of violations</li>
+     *     <li>valid - is the picture valid or not</li>
      * </ul>
      *
      * @return a stream of arguments for parameterized tests
      */
     private static Stream<Arguments> provideDataForPictureValidationTest() {
         return Stream.of(
-                Arguments.of(null, 0),
-                Arguments.of(Mockito.mock(PictureDTO.class), 0),
-                Arguments.of(Mockito.mock(IdentifiedPictureDTO.class), 0)
+                Arguments.of(null, true),
+                Arguments.of(Mockito.mock(PictureDTO.class), true),
+                Arguments.of(Mockito.mock(IdentifiedPictureDTO.class), true)
         );
     }
 

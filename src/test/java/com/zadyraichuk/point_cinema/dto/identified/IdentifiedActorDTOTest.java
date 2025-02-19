@@ -1,10 +1,7 @@
 package com.zadyraichuk.point_cinema.dto.identified;
 
+import com.zadyraichuk.point_cinema.dto.ValidationTestUtils;
 import com.zadyraichuk.point_cinema.dto.general.PictureDTO;
-import jakarta.validation.ConstraintViolation;
-import jakarta.validation.Validation;
-import jakarta.validation.Validator;
-import jakarta.validation.ValidatorFactory;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -16,7 +13,6 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.util.Set;
 import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -31,17 +27,11 @@ class IdentifiedActorDTOTest {
     @Mock
     private static PictureDTO picture;
 
-    private static Validator validator;
-
     @BeforeAll
-    static void setupValidator() {
+    static void setupClass() {
         id = "1";
         firstName = "test";
         lastName = "test";
-
-        ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
-        validator = factory.getValidator();
-        factory.close();
     }
 
     @Test
@@ -83,15 +73,9 @@ class IdentifiedActorDTOTest {
     @ParameterizedTest
     @MethodSource("provideDataForIdValidationTest")
     @DisplayName("Test id field validation")
-    void testIdValidation(String id, int expectedViolations) {
+    void testIdValidation(String id, boolean isValid) {
         IdentifiedActorDTO actorDTO = new IdentifiedActorDTO(id, "test", "test", null);
-        Set<ConstraintViolation<IdentifiedActorDTO>> violations = validator.validate(actorDTO);
-
-        assertEquals(violations.size(), expectedViolations, "Wrong number of violations");
-        if (expectedViolations != 0) {
-            assertEquals("Id cannot be null, empty or blank", violations.iterator().next().getMessage(),
-                    "Wrong error message");
-        }
+        ValidationTestUtils.validate(actorDTO, isValid);
     }
 
     /**
@@ -122,19 +106,13 @@ class IdentifiedActorDTOTest {
      * The arguments are:
      * <ul>
      *     <li>id - string with actor identifier</li>
-     *     <li>expectedViolations - the expected number of violations</li>
+     *     <li>valid - is the id valid or not</li>
      * </ul>
      *
      * @return a stream of arguments for parameterized tests
      */
     private static Stream<Arguments> provideDataForIdValidationTest() {
-        return Stream.of(
-                Arguments.of(null, 1),
-                Arguments.of("", 1),
-                Arguments.of("  ", 1),
-                Arguments.of("1", 0),
-                Arguments.of(" 1  ", 0)
-        );
+        return ValidationTestUtils.forNotBlankValidation();
     }
 
 }

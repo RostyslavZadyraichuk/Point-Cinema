@@ -137,7 +137,7 @@ class CinemaDTOTest {
      * @return a stream of arguments for parameterized tests
      */
     private static Stream<Arguments> provideDataForNameValidationTest() {
-        return ValidationTestUtils.NOT_BLANK_VALIDATION;
+        return ValidationTestUtils.forNotBlankValidation();
     }
 
     /**
@@ -169,7 +169,7 @@ class CinemaDTOTest {
      * @return a stream of arguments for parameterized tests
      */
     private static Stream<Arguments> provideDataForCityValidationTest() {
-        return ValidationTestUtils.NOT_BLANK_VALIDATION;
+        return ValidationTestUtils.forNotBlankValidation();
     }
 
     /**
@@ -183,7 +183,7 @@ class CinemaDTOTest {
      * @return a stream of arguments for parameterized tests
      */
     private static Stream<Arguments> provideDataForStreetValidationTest() {
-        return ValidationTestUtils.NOT_BLANK_VALIDATION;
+        return ValidationTestUtils.forNotBlankValidation();
     }
 
 }
