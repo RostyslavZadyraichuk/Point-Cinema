@@ -1,9 +1,12 @@
 package com.zadyraichuk.point_cinema.dto;
 
+import com.zadyraichuk.point_cinema.entity.Hall;
+import com.zadyraichuk.point_cinema.entity.Technology;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
