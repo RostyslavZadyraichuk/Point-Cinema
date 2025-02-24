@@ -53,7 +53,7 @@ class IdentifiedDTOTest {
     }
 
     @ParameterizedTest
-    @MethodSource("provideDataForIdValidationTest")
+    @MethodSource("com.zadyraichuk.point_cinema.dto.ValidationTestUtils#forNotBlankValidation")
     @DisplayName("Test id field validation")
     void testIdValidation(String id, boolean isValid) {
         TestIdentifiedDTO dto = new TestIdentifiedDTO(id);
@@ -81,20 +81,6 @@ class IdentifiedDTOTest {
                 Arguments.of(dto2, dto1, true),
                 Arguments.of(dto1, dto3, false)
         );
-    }
-
-    /**
-     * Provides arguments for testing the testIdValidation.
-     * The arguments are:
-     * <ul>
-     *     <li>id - string with picture identifier</li>
-     *     <li>valid - is the id valid or not</li>
-     * </ul>
-     *
-     * @return a stream of arguments for parameterized tests
-     */
-    private static Stream<Arguments> provideDataForIdValidationTest() {
-        return ValidationTestUtils.forNotBlankValidation();
     }
 
     @Getter

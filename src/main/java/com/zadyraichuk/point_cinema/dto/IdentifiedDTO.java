@@ -1,5 +1,6 @@
 package com.zadyraichuk.point_cinema.dto;
 
+import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -28,7 +29,9 @@ public abstract class IdentifiedDTO {
 
     /**
      * The id of the picture.
+     * Identifier cannot be null, empty or blank.
      */
+    @NotBlank(message = "Id cannot be null, empty or blank")
     private final String id;
 
 }

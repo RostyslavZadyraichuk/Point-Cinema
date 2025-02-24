@@ -1,8 +1,10 @@
-package com.zadyraichuk.point_cinema.dto.general;
+package com.zadyraichuk.point_cinema.dto.request;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
 
 /**
  * Represents general picture data transfer object without identifier.
@@ -22,7 +24,7 @@ import lombok.*;
 @Getter
 @AllArgsConstructor
 @EqualsAndHashCode
-public class PictureDTO {
+public class NewPictureDTO {
 
     /**
      * The binary data of the picture.
